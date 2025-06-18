@@ -12,6 +12,11 @@
     "format": "prettier --write --list-different \"./**/*.{js,jsx,ts,tsx,css,md,json,yaml}\" "
   },
   "dependencies": {
+    "@linktivity/link-hooks": "^1.0.1",
+    "@linktivity/link-icons": "^1.0.1",
+    "@linktivity/link-styles": "^1.0.1",
+    "@linktivity/link-ui": "^1.0.1",
+    "@linktivity/link-utils": "^1.0.1",
     "i18next": "^23.10.1",
     "mobx": "^6.13.1",
     "mobx-react-lite": "^4.0.7",
@@ -32,19 +37,19 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.5.0",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
     "husky": "^9.1.5",
     "lint-staged": "^15.2.9",
     "postcss": "^8.4.24",
     "postcss-custom-media": "^11.0.1",
     "postcss-nested": "^6.0.1",
     "prettier": "^3.5.3",
-    "vite-plugin-svgr": "^4.2.0",
-    "eslint": "^9.25.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
-    "globals": "^16.0.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }
