@@ -1,0 +1,6 @@
+/* ref: https://react.fluentui.dev/?path=/docs/theme-colors--page */
+:root {
+  --width-main: 640px;
+  --height-header: 48px;
+  --width-sidebar: 240px;
+}

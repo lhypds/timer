@@ -1,0 +1,9 @@
+.home {
+  height: 100%;
+}
+
+.title {
+  padding: 16px;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semi-bold);
+}

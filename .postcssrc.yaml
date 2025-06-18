@@ -1,0 +1,7 @@
+plugins:
+  '@csstools/postcss-global-data':
+    files:
+      - src/styles/media.css
+  autoprefixer: {}
+  postcss-nested: {}
+  postcss-custom-media: {}
