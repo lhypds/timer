@@ -1,6 +1,6 @@
 import homeStyles from './home.module.css';
 import { Input, Button } from '@linktivity/link-ui';
-import { useState, useEffect, ChangeEvent, useMemo } from 'react';
+import { useState, useEffect, useCallback, ChangeEvent, useMemo } from 'react';
 
 const HomeView = () => {
   const [seconds, setSeconds] = useState(300);
@@ -64,29 +64,48 @@ const HomeView = () => {
     setSeconds(prev => Math.max(prev + amount, 0));
 
   // start the timer
-  const handleStart = () => {
+  const handleStart = useCallback(() => {
     if (mode === 'timer') {
       setInitialSeconds(seconds);
     } else if (mode === 'stopwatch') {
       setSeconds(0);
     }
     setIsRunning(true);
-  };
+  }, [mode, seconds]);
 
   // pause the timer
-  const handlePause = () => {
+  const handlePause = useCallback(() => {
     setIsRunning(false);
-  };
+  }, []);
 
   // reset the timer to initial value
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     if (mode === 'timer') {
       setSeconds(initialSeconds);
     } else {
       setSeconds(0);
     }
     setIsRunning(false);
-  };
+  }, [mode, initialSeconds]);
+
+  // keyboard shortcuts: Space to start/pause, Backspace to reset
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (isRunning) {
+          handlePause();
+        } else {
+          handleStart();
+        }
+      } else if (e.code === 'Backspace') {
+        e.preventDefault();
+        handleReset();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isRunning, handlePause, handleStart, handleReset]);
 
   return (
     <div className={homeStyles.home}>
