@@ -132,7 +132,8 @@ const HomeView = () => {
             className={homeStyles.input}
             style={{ textAlign: 'center' }}
             value={formatTime(seconds)}
-            onChange={handleInputChange}
+            onChange={mode === 'timer' ? handleInputChange : undefined}
+            readOnly={mode === 'stopwatch'}
           />
           <div>
             <Button
