@@ -6,12 +6,15 @@ const HomeView = () => {
   const [seconds, setSeconds] = useState(300);
   const [initialSeconds, setInitialSeconds] = useState(300);
   const [isRunning, setIsRunning] = useState(false);
+  // track if timer/stopwatch has been started (running or paused)
+  const [hasStarted, setHasStarted] = useState(false);
 
   // mode: 'timer' counts down, 'stopwatch' counts up
   const [mode, setMode] = useState<'timer' | 'stopwatch'>('timer');
 
   const handleModeChange = (newMode: 'timer' | 'stopwatch') => {
     setIsRunning(false);
+    setHasStarted(false);
     setMode(newMode);
     setSeconds(newMode === 'stopwatch' ? 0 : initialSeconds);
   };
@@ -26,8 +29,10 @@ const HomeView = () => {
   );
 
   const strokeDashoffset = useMemo(() => {
-    return circumference - (seconds / initialSeconds) * circumference;
-  }, [seconds, initialSeconds, circumference]);
+    // update circle only after start; before start, show full circle, else show at paused or running state
+    const secsForProgress = hasStarted ? seconds : initialSeconds;
+    return circumference - (secsForProgress / initialSeconds) * circumference;
+  }, [seconds, initialSeconds, circumference, hasStarted]);
 
   useEffect(() => {
     let timer: number;
@@ -65,13 +70,17 @@ const HomeView = () => {
 
   // start the timer
   const handleStart = useCallback(() => {
-    if (mode === 'timer') {
-      setInitialSeconds(seconds);
-    } else if (mode === 'stopwatch') {
-      setSeconds(0);
+    // on first start, initialize timer/stopwatch; on resume skip resets
+    if (!hasStarted) {
+      if (mode === 'timer') {
+        setInitialSeconds(seconds);
+      } else if (mode === 'stopwatch') {
+        setSeconds(0);
+      }
+      setHasStarted(true);
     }
     setIsRunning(true);
-  }, [mode, seconds]);
+  }, [mode, seconds, hasStarted]);
 
   // pause the timer
   const handlePause = useCallback(() => {
@@ -86,6 +95,7 @@ const HomeView = () => {
       setSeconds(0);
     }
     setIsRunning(false);
+    setHasStarted(false);
   }, [mode, initialSeconds]);
 
   // keyboard shortcuts: Space to start/pause, Backspace to reset
