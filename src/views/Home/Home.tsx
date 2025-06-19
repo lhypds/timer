@@ -91,6 +91,14 @@ const HomeView = () => {
           />
         </svg>
         <div className={homeStyles.inner}>
+          <div>
+            <Button className={homeStyles.button} variant="outlined">
+              Timer
+            </Button>
+            <Button className={homeStyles.button} variant="outlined">
+              Stopwatch
+            </Button>
+          </div>
           <Input
             className={homeStyles.input}
             style={{ textAlign: 'center' }}
