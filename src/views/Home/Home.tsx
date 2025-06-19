@@ -15,6 +15,7 @@ const HomeView = () => {
     () => normalizedRadius * 2 * Math.PI,
     [normalizedRadius]
   );
+
   const strokeDashoffset = useMemo(() => {
     return circumference - (seconds / initialSeconds) * circumference;
   }, [seconds, initialSeconds, circumference]);
@@ -48,9 +49,22 @@ const HomeView = () => {
 
   const handleAdjust = (amount: number) =>
     setSeconds(prev => Math.max(prev + amount, 0));
-  const toggleRunning = () => {
-    if (!isRunning) setInitialSeconds(seconds);
-    setIsRunning(prev => !prev);
+
+  // start the timer
+  const handleStart = () => {
+    setInitialSeconds(seconds);
+    setIsRunning(true);
+  };
+
+  // pause the timer
+  const handlePause = () => {
+    setIsRunning(false);
+  };
+
+  // reset the timer to initial value
+  const handleReset = () => {
+    setSeconds(initialSeconds);
+    setIsRunning(false);
   };
 
   return (
@@ -66,7 +80,7 @@ const HomeView = () => {
             cy={radius}
           />
           <circle
-            stroke="#007bff"
+            stroke="#6b6b6b"
             fill="transparent"
             strokeWidth={stroke}
             strokeDasharray={`${circumference} ${circumference}`}
@@ -107,13 +121,32 @@ const HomeView = () => {
             </Button>
           </div>
           <div>
-            <Button
-              className={homeStyles.button}
-              variant="outlined"
-              onClick={toggleRunning}
-            >
-              {isRunning ? '❚❚' : '▶'}
-            </Button>
+            {isRunning ? (
+              <Button
+                className={homeStyles.button}
+                variant="outlined"
+                onClick={handlePause}
+              >
+                {'❚❚'}
+              </Button>
+            ) : (
+              <Button
+                className={homeStyles.button}
+                variant="outlined"
+                onClick={handleStart}
+              >
+                {'▶'}
+              </Button>
+            )}
+            {(isRunning || seconds !== initialSeconds) && (
+              <Button
+                className={homeStyles.button}
+                variant="outlined"
+                onClick={handleReset}
+              >
+                {'↻'}
+              </Button>
+            )}
           </div>
         </div>
       </div>
