@@ -114,15 +114,15 @@ const HomeView = () => {
         <div className={homeStyles.inner}>
           <div>
             <Button
-              className={homeStyles.button}
-              variant={mode === 'timer' ? 'contained' : 'outlined'}
+              className={`${homeStyles.button} ${mode === 'timer' ? homeStyles.buttonActive : ''}`}
+              variant="outlined"
               onClick={() => handleModeChange('timer')}
             >
               Timer
             </Button>
             <Button
-              className={homeStyles.button}
-              variant={mode === 'stopwatch' ? 'contained' : 'outlined'}
+              className={`${homeStyles.button} ${mode === 'stopwatch' ? homeStyles.buttonActive : ''}`}
+              variant="outlined"
               onClick={() => handleModeChange('stopwatch')}
             >
               Stopwatch

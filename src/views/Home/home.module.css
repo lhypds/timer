@@ -42,6 +42,10 @@
   background-color: #e0e0e0;
 }
 
+.buttonActive {
+  background-color: #e0e0e0;
+}
+
 .circle {
   width: 360px;
   height: 360px;
