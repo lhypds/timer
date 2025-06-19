@@ -7,6 +7,15 @@ const HomeView = () => {
   const [initialSeconds, setInitialSeconds] = useState(300);
   const [isRunning, setIsRunning] = useState(false);
 
+  // mode: 'timer' counts down, 'stopwatch' counts up
+  const [mode, setMode] = useState<'timer' | 'stopwatch'>('timer');
+
+  const handleModeChange = (newMode: 'timer' | 'stopwatch') => {
+    setIsRunning(false);
+    setMode(newMode);
+    setSeconds(newMode === 'stopwatch' ? 0 : initialSeconds);
+  };
+
   // calculate circle progress
   const radius = 180;
   const stroke = 4;
@@ -22,14 +31,18 @@ const HomeView = () => {
 
   useEffect(() => {
     let timer: number;
-    if (isRunning && seconds > 0) {
-      timer = setInterval(() => setSeconds(prev => prev - 1), 1000);
+    if (isRunning) {
+      if (mode === 'timer' && seconds > 0) {
+        timer = setInterval(() => setSeconds(prev => prev - 1), 1000);
+      } else if (mode === 'stopwatch') {
+        timer = setInterval(() => setSeconds(prev => prev + 1), 1000);
+      }
     }
-    if (seconds === 0) {
+    if (mode === 'timer' && seconds === 0) {
       setIsRunning(false);
     }
     return () => clearInterval(timer);
-  }, [isRunning, seconds]);
+  }, [isRunning, seconds, mode]);
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60)
@@ -52,7 +65,11 @@ const HomeView = () => {
 
   // start the timer
   const handleStart = () => {
-    setInitialSeconds(seconds);
+    if (mode === 'timer') {
+      setInitialSeconds(seconds);
+    } else if (mode === 'stopwatch') {
+      setSeconds(0);
+    }
     setIsRunning(true);
   };
 
@@ -63,7 +80,11 @@ const HomeView = () => {
 
   // reset the timer to initial value
   const handleReset = () => {
-    setSeconds(initialSeconds);
+    if (mode === 'timer') {
+      setSeconds(initialSeconds);
+    } else {
+      setSeconds(0);
+    }
     setIsRunning(false);
   };
 
@@ -92,10 +113,18 @@ const HomeView = () => {
         </svg>
         <div className={homeStyles.inner}>
           <div>
-            <Button className={homeStyles.button} variant="outlined">
+            <Button
+              className={homeStyles.button}
+              variant={mode === 'timer' ? 'contained' : 'outlined'}
+              onClick={() => handleModeChange('timer')}
+            >
               Timer
             </Button>
-            <Button className={homeStyles.button} variant="outlined">
+            <Button
+              className={homeStyles.button}
+              variant={mode === 'stopwatch' ? 'contained' : 'outlined'}
+              onClick={() => handleModeChange('stopwatch')}
+            >
               Stopwatch
             </Button>
           </div>
@@ -146,7 +175,9 @@ const HomeView = () => {
                 {'▶'}
               </Button>
             )}
-            {(isRunning || seconds !== initialSeconds) && (
+            {(mode === 'timer'
+              ? isRunning || seconds !== initialSeconds
+              : isRunning || seconds > 0) && (
               <Button
                 className={homeStyles.button}
                 variant="outlined"
