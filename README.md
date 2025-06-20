@@ -1,12 +1,12 @@
 ## Timer
 
-Timer and stopwatch.
+Timer and stopwatch.  
 Use `space` to start/stop the timer, `backspace` to reset it.
 
-Setup
+Setup  
 `pnpm install`
 
-Run
+Run  
 `pnpm run dev`
 
 Originally copied from `link-frontend`.
