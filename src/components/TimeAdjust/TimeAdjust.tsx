@@ -9,30 +9,27 @@ interface TimeAdjustProps {
 const TimeAdjust: React.FC<TimeAdjustProps> = ({
   onAdjust,
   buttonClass = ''
-}) => (
-  <div>
-    <Button
-      className={buttonClass}
-      variant="outlined"
-      onClick={() => onAdjust(30)}
-    >
-      {'+0:30'}
-    </Button>
-    <Button
-      className={buttonClass}
-      variant="outlined"
-      onClick={() => onAdjust(60)}
-    >
-      {'+1:00'}
-    </Button>
-    <Button
-      className={buttonClass}
-      variant="outlined"
-      onClick={() => onAdjust(300)}
-    >
-      {'+5:00'}
-    </Button>
-  </div>
-);
+}) => {
+  const adjustments = [
+    { amount: 30, label: '+0:30' },
+    { amount: 60, label: '+1:00' },
+    { amount: 300, label: '+5:00' }
+  ];
+
+  return (
+    <div>
+      {adjustments.map(({ amount, label }) => (
+        <Button
+          key={amount}
+          className={buttonClass}
+          variant="outlined"
+          onClick={() => onAdjust(amount)}
+        >
+          {label}
+        </Button>
+      ))}
+    </div>
+  );
+};
 
 export default TimeAdjust;
