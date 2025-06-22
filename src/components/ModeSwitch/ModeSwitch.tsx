@@ -1,7 +1,12 @@
 import React from 'react';
 import { Button } from '@linktivity/link-ui';
 
-export type Mode = 'timer' | 'stopwatch';
+export const Mode = {
+  Timer: 'timer',
+  Stopwatch: 'stopwatch'
+} as const;
+
+export type Mode = (typeof Mode)[keyof typeof Mode];
 
 interface ModeSwitchProps {
   mode: Mode;
@@ -18,16 +23,16 @@ const ModeSwitch: React.FC<ModeSwitchProps> = ({
 }) => (
   <div>
     <Button
-      className={`${buttonClass} ${mode === 'timer' ? activeClass : ''}`.trim()}
+      className={`${buttonClass} ${mode === Mode.Timer ? activeClass : ''}`.trim()}
       variant="outlined"
-      onClick={() => onModeChange('timer')}
+      onClick={() => onModeChange(Mode.Timer)}
     >
       Timer
     </Button>
     <Button
-      className={`${buttonClass} ${mode === 'stopwatch' ? activeClass : ''}`.trim()}
+      className={`${buttonClass} ${mode === Mode.Stopwatch ? activeClass : ''}`.trim()}
       variant="outlined"
-      onClick={() => onModeChange('stopwatch')}
+      onClick={() => onModeChange(Mode.Stopwatch)}
     >
       Stopwatch
     </Button>
