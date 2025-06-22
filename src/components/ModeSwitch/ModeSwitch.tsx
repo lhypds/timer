@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from '@linktivity/link-ui';
 
+export type Mode = 'timer' | 'stopwatch';
+
 interface ModeSwitchProps {
-  mode: 'timer' | 'stopwatch';
-  onModeChange: (mode: 'timer' | 'stopwatch') => void;
+  mode: Mode;
+  onModeChange: (mode: Mode) => void;
   buttonClass?: string;
   activeClass?: string;
 }
