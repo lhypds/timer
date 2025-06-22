@@ -1,11 +1,16 @@
 import homeStyles from './home.module.css';
-import { Input, Button } from '@linktivity/link-ui';
-import { useState, useEffect, useCallback, ChangeEvent, useMemo } from 'react';
+import { useState, useEffect, useCallback, ChangeEvent } from 'react';
+import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
+import ModeSwitch from '../../components/ModeSwitch/ModeSwitch';
+import Time from '../../components/Time/Time';
+import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
+import StartPause from '../../components/StartPause/StartPause';
 
 const HomeView = () => {
   const [seconds, setSeconds] = useState(300);
   const [initialSeconds, setInitialSeconds] = useState(300);
   const [isRunning, setIsRunning] = useState(false);
+
   // track if timer/stopwatch has been started (running or paused)
   const [hasStarted, setHasStarted] = useState(false);
 
@@ -18,21 +23,6 @@ const HomeView = () => {
     setMode(newMode);
     setSeconds(newMode === 'stopwatch' ? 0 : initialSeconds);
   };
-
-  // calculate circle progress
-  const radius = 180;
-  const stroke = 4;
-  const normalizedRadius = useMemo(() => radius - stroke / 2, []);
-  const circumference = useMemo(
-    () => normalizedRadius * 2 * Math.PI,
-    [normalizedRadius]
-  );
-
-  const strokeDashoffset = useMemo(() => {
-    // update circle only after start; before start, show full circle, else show at paused or running state
-    const secsForProgress = hasStarted ? seconds : initialSeconds;
-    return circumference - (secsForProgress / initialSeconds) * circumference;
-  }, [seconds, initialSeconds, circumference, hasStarted]);
 
   useEffect(() => {
     let timer: number;
@@ -117,106 +107,44 @@ const HomeView = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isRunning, handlePause, handleStart, handleReset]);
 
+  const radius = 180;
+  const stroke = 4;
+
   return (
     <div className={homeStyles.home}>
       <div className={homeStyles.circle}>
-        <svg height={radius * 2} width={radius * 2}>
-          <circle
-            stroke="#e6e6e6"
-            fill="transparent"
-            strokeWidth={stroke}
-            r={normalizedRadius}
-            cx={radius}
-            cy={radius}
-          />
-          <circle
-            stroke="#6b6b6b"
-            fill="transparent"
-            strokeWidth={stroke}
-            strokeDasharray={`${circumference} ${circumference}`}
-            style={{ strokeDashoffset }}
-            r={normalizedRadius}
-            cx={radius}
-            cy={radius}
-          />
-        </svg>
+        <ProgressCircle
+          radius={radius}
+          stroke={stroke}
+          seconds={seconds}
+          initialSeconds={initialSeconds}
+          hasStarted={hasStarted}
+        />
         <div className={homeStyles.inner}>
-          <div>
-            <Button
-              className={`${homeStyles.button} ${mode === 'timer' ? homeStyles.buttonActive : ''}`}
-              variant="outlined"
-              onClick={() => handleModeChange('timer')}
-            >
-              Timer
-            </Button>
-            <Button
-              className={`${homeStyles.button} ${mode === 'stopwatch' ? homeStyles.buttonActive : ''}`}
-              variant="outlined"
-              onClick={() => handleModeChange('stopwatch')}
-            >
-              Stopwatch
-            </Button>
-          </div>
-          <Input
-            className={homeStyles.input}
-            style={{ textAlign: 'center' }}
+          <ModeSwitch
+            mode={mode}
+            onModeChange={handleModeChange}
+            buttonClass={homeStyles.button}
+            activeClass={homeStyles.buttonActive}
+          />
+          <Time
             value={formatTime(seconds)}
             onChange={mode === 'timer' ? handleInputChange : undefined}
             readOnly={mode === 'stopwatch'}
+            className={homeStyles.input}
+            style={{ textAlign: 'center' }}
           />
-          <div>
-            <Button
-              className={homeStyles.button}
-              variant="outlined"
-              onClick={() => handleAdjust(30)}
-            >
-              {'+0:30'}
-            </Button>
-            <Button
-              className={homeStyles.button}
-              variant="outlined"
-              onClick={() => handleAdjust(60)}
-            >
-              {'+1:00'}
-            </Button>
-            <Button
-              className={homeStyles.button}
-              variant="outlined"
-              onClick={() => handleAdjust(300)}
-            >
-              {'+5:00'}
-            </Button>
-          </div>
-          <div>
-            {isRunning ? (
-              <Button
-                className={homeStyles.button}
-                variant="outlined"
-                onClick={handlePause}
-              >
-                {'❚❚'}
-              </Button>
-            ) : (
-              <Button
-                className={homeStyles.button}
-                variant="outlined"
-                onClick={handleStart}
-              >
-                {'▶'}
-              </Button>
-            )}
-            {(mode === 'timer'
-              ? isRunning || seconds !== initialSeconds
-              : isRunning || seconds > 0) && (
-              <Button
-                className={homeStyles.button}
-                variant="outlined"
-                onClick={handleReset}
-              >
-                {'↻'}
-              </Button>
-            )}
-          </div>
+          <TimeAdjust onAdjust={handleAdjust} buttonClass={homeStyles.button} />
+          <StartPause
+            isRunning={isRunning}
+            mode={mode}
+            seconds={seconds}
+            initialSeconds={initialSeconds}
+            onStart={handleStart}
+            onPause={handlePause}
+            onReset={handleReset}
+            buttonClass={homeStyles.button}
+          />
         </div>
       </div>
     </div>
