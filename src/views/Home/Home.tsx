@@ -6,9 +6,14 @@ import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
 import StartPause from '../../components/StartPause/StartPause';
 import homeStyles from './home.module.css';
 
+const TIMER_INTERVAL_MS = 1000;
+const RADIUS = 180;
+const STROKE = 4;
+const SECONDS_INITIAL = 300;
+
 const HomeView = () => {
-  const [seconds, setSeconds] = useState(300);
-  const [initialSeconds, setInitialSeconds] = useState(300);
+  const [seconds, setSeconds] = useState(SECONDS_INITIAL);
+  const [initialSeconds, setInitialSeconds] = useState(SECONDS_INITIAL);
   const [isRunning, setIsRunning] = useState(false);
 
   // track if timer/stopwatch has been started (running or paused)
@@ -28,9 +33,15 @@ const HomeView = () => {
     let timer: number;
     if (isRunning) {
       if (mode === 'timer' && seconds > 0) {
-        timer = setInterval(() => setSeconds(prev => prev - 1), 1000);
+        timer = setInterval(
+          () => setSeconds(prev => prev - 1),
+          TIMER_INTERVAL_MS
+        );
       } else if (mode === 'stopwatch') {
-        timer = setInterval(() => setSeconds(prev => prev + 1), 1000);
+        timer = setInterval(
+          () => setSeconds(prev => prev + 1),
+          TIMER_INTERVAL_MS
+        );
       }
     }
     if (mode === 'timer' && seconds === 0) {
@@ -107,15 +118,12 @@ const HomeView = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isRunning, handlePause, handleStart, handleReset]);
 
-  const radius = 180;
-  const stroke = 4;
-
   return (
     <div className={homeStyles.home}>
       <div className={homeStyles.circle}>
         <ProgressCircle
-          radius={radius}
-          stroke={stroke}
+          radius={RADIUS}
+          stroke={STROKE}
           seconds={seconds}
           initialSeconds={initialSeconds}
           hasStarted={hasStarted}
