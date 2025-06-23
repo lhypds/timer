@@ -1,10 +1,10 @@
-import homeStyles from './home.module.css';
 import { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
 import ModeSwitch from '../../components/ModeSwitch/ModeSwitch';
 import Time from '../../components/Time/Time';
 import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
 import StartPause from '../../components/StartPause/StartPause';
+import homeStyles from './home.module.css';
 
 const HomeView = () => {
   const [seconds, setSeconds] = useState(300);
