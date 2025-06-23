@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
-import ModeSwitch from '../../components/ModeSwitch/ModeSwitch';
+import {
+  Mode,
+  default as ModeSwitch
+} from '../../components/ModeSwitch/ModeSwitch';
 import Time from '../../components/Time/Time';
 import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
 import StartPause from '../../components/StartPause/StartPause';
@@ -9,42 +12,42 @@ import homeStyles from './home.module.css';
 const TIMER_INTERVAL_MS = 1000;
 const RADIUS = 180;
 const STROKE = 4;
-const SECONDS_INITIAL = 300;
+const SECONDS_INIT = 300;
 
 const HomeView = () => {
-  const [seconds, setSeconds] = useState(SECONDS_INITIAL);
-  const [initialSeconds, setInitialSeconds] = useState(SECONDS_INITIAL);
+  const [seconds, setSeconds] = useState(SECONDS_INIT);
+  const [initialSeconds, setInitialSeconds] = useState(SECONDS_INIT);
   const [isRunning, setIsRunning] = useState(false);
 
   // track if timer/stopwatch has been started (running or paused)
   const [hasStarted, setHasStarted] = useState(false);
 
   // mode: 'timer' counts down, 'stopwatch' counts up
-  const [mode, setMode] = useState<'timer' | 'stopwatch'>('timer');
+  const [mode, setMode] = useState<Mode>(Mode.Timer);
 
-  const handleModeChange = (newMode: 'timer' | 'stopwatch') => {
+  const handleModeChange = (newMode: Mode) => {
     setIsRunning(false);
     setHasStarted(false);
     setMode(newMode);
-    setSeconds(newMode === 'stopwatch' ? 0 : initialSeconds);
+    setSeconds(newMode === Mode.Stopwatch ? 0 : initialSeconds);
   };
 
   useEffect(() => {
     let timer: number;
     if (isRunning) {
-      if (mode === 'timer' && seconds > 0) {
+      if (mode === Mode.Timer && seconds > 0) {
         timer = setInterval(
           () => setSeconds(prev => prev - 1),
           TIMER_INTERVAL_MS
         );
-      } else if (mode === 'stopwatch') {
+      } else if (mode === Mode.Stopwatch) {
         timer = setInterval(
           () => setSeconds(prev => prev + 1),
           TIMER_INTERVAL_MS
         );
       }
     }
-    if (mode === 'timer' && seconds === 0) {
+    if (mode === Mode.Timer && seconds === 0) {
       setIsRunning(false);
     }
     return () => clearInterval(timer);
@@ -73,9 +76,9 @@ const HomeView = () => {
   const handleStart = useCallback(() => {
     // on first start, initialize timer/stopwatch; on resume skip resets
     if (!hasStarted) {
-      if (mode === 'timer') {
+      if (mode === Mode.Timer) {
         setInitialSeconds(seconds);
-      } else if (mode === 'stopwatch') {
+      } else if (mode === Mode.Stopwatch) {
         setSeconds(0);
       }
       setHasStarted(true);
@@ -90,7 +93,7 @@ const HomeView = () => {
 
   // reset the timer to initial value
   const handleReset = useCallback(() => {
-    if (mode === 'timer') {
+    if (mode === Mode.Timer) {
       setSeconds(initialSeconds);
     } else {
       setSeconds(0);
@@ -137,8 +140,8 @@ const HomeView = () => {
           />
           <Time
             value={formatTime(seconds)}
-            onChange={mode === 'timer' ? handleInputChange : undefined}
-            readOnly={mode === 'stopwatch'}
+            onChange={mode === Mode.Timer ? handleInputChange : undefined}
+            readOnly={mode === Mode.Stopwatch}
             className={homeStyles.input}
             style={{ textAlign: 'center' }}
           />
