@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from 'react';
-import { Input } from '@linktivity/link-ui';
 
 interface TimeProps {
   value: string;
@@ -16,7 +15,7 @@ const Time: React.FC<TimeProps> = ({
   className,
   style
 }) => (
-  <Input
+  <input
     className={className}
     style={style}
     value={value}

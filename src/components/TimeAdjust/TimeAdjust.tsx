@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@linktivity/link-ui';
 
 interface TimeAdjustProps {
   onAdjust: (amount: number) => void;
@@ -19,14 +18,13 @@ const TimeAdjust: React.FC<TimeAdjustProps> = ({
   return (
     <div>
       {adjustments.map(({ amount, label }) => (
-        <Button
+        <button
           key={amount}
           className={buttonClass}
-          variant="outlined"
           onClick={() => onAdjust(amount)}
         >
           {label}
-        </Button>
+        </button>
       ))}
     </div>
   );

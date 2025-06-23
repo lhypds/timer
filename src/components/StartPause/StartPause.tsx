@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@linktivity/link-ui';
 
 interface StartPauseProps {
   isRunning: boolean;
@@ -30,18 +29,18 @@ const StartPause: React.FC<StartPauseProps> = ({
   return (
     <div>
       {isRunning ? (
-        <Button className={buttonClass} variant="outlined" onClick={onPause}>
+        <button className={buttonClass} onClick={onPause}>
           {'❚❚'}
-        </Button>
+        </button>
       ) : (
-        <Button className={buttonClass} variant="outlined" onClick={onStart}>
+        <button className={buttonClass} onClick={onStart}>
           {'▶'}
-        </Button>
+        </button>
       )}
       {showReset && (
-        <Button className={buttonClass} variant="outlined" onClick={onReset}>
+        <button className={buttonClass} onClick={onReset}>
           {'↻'}
-        </Button>
+        </button>
       )}
     </div>
   );
