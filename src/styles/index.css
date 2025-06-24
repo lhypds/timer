@@ -1,4 +1,6 @@
 @import 'ress';
+@import '@linktivity/link-ui/style';
+@import '@linktivity/link-styles';
 @import './root.css';
 
 html {

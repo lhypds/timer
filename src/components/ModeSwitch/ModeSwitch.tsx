@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@linktivity/link-ui';
+import styles from './mode.module.css';
 
 export const Mode = {
   Timer: 'timer',
@@ -11,31 +11,22 @@ export type Mode = (typeof Mode)[keyof typeof Mode];
 interface ModeSwitchProps {
   mode: Mode;
   onModeChange: (mode: Mode) => void;
-  buttonClass?: string;
-  activeClass?: string;
 }
 
-const ModeSwitch: React.FC<ModeSwitchProps> = ({
-  mode,
-  onModeChange,
-  buttonClass = '',
-  activeClass = ''
-}) => (
+const ModeSwitch: React.FC<ModeSwitchProps> = ({ mode, onModeChange }) => (
   <div>
-    <Button
-      className={`${buttonClass} ${mode === Mode.Timer ? activeClass : ''}`.trim()}
-      variant="outlined"
+    <button
+      className={`${styles.button} ${mode === Mode.Timer ? styles.active : ''}`.trim()}
       onClick={() => onModeChange(Mode.Timer)}
     >
       Timer
-    </Button>
-    <Button
-      className={`${buttonClass} ${mode === Mode.Stopwatch ? activeClass : ''}`.trim()}
-      variant="outlined"
+    </button>
+    <button
+      className={`${styles.button} ${mode === Mode.Stopwatch ? styles.active : ''}`.trim()}
       onClick={() => onModeChange(Mode.Stopwatch)}
     >
       Stopwatch
-    </Button>
+    </button>
   </div>
 );
 

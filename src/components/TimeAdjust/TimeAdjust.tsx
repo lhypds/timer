@@ -1,15 +1,12 @@
 import React from 'react';
-import { Button } from '@linktivity/link-ui';
+import styles from './time.module.css';
 
 interface TimeAdjustProps {
   onAdjust: (amount: number) => void;
   buttonClass?: string;
 }
 
-const TimeAdjust: React.FC<TimeAdjustProps> = ({
-  onAdjust,
-  buttonClass = ''
-}) => {
+const TimeAdjust: React.FC<TimeAdjustProps> = ({ onAdjust }) => {
   const adjustments = [
     { amount: 30, label: '+0:30' },
     { amount: 60, label: '+1:00' },
@@ -19,14 +16,13 @@ const TimeAdjust: React.FC<TimeAdjustProps> = ({
   return (
     <div>
       {adjustments.map(({ amount, label }) => (
-        <Button
+        <button
           key={amount}
-          className={buttonClass}
-          variant="outlined"
+          className={`${styles.button}`}
           onClick={() => onAdjust(amount)}
         >
           {label}
-        </Button>
+        </button>
       ))}
     </div>
   );

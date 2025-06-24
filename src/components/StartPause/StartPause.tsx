@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@linktivity/link-ui';
+import styles from './start.module.css';
 
 interface StartPauseProps {
   isRunning: boolean;
@@ -19,8 +19,7 @@ const StartPause: React.FC<StartPauseProps> = ({
   initialSeconds,
   onStart,
   onPause,
-  onReset,
-  buttonClass = ''
+  onReset
 }) => {
   const showReset =
     mode === 'timer'
@@ -30,18 +29,18 @@ const StartPause: React.FC<StartPauseProps> = ({
   return (
     <div>
       {isRunning ? (
-        <Button className={buttonClass} variant="outlined" onClick={onPause}>
+        <button className={styles.button} onClick={onPause}>
           {'❚❚'}
-        </Button>
+        </button>
       ) : (
-        <Button className={buttonClass} variant="outlined" onClick={onStart}>
+        <button className={styles.button} onClick={onStart}>
           {'▶'}
-        </Button>
+        </button>
       )}
       {showReset && (
-        <Button className={buttonClass} variant="outlined" onClick={onReset}>
+        <button className={styles.button} onClick={onReset}>
           {'↻'}
-        </Button>
+        </button>
       )}
     </div>
   );

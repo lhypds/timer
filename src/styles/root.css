@@ -3,4 +3,8 @@
   --width-main: 640px;
   --height-header: 48px;
   --width-sidebar: 240px;
+
+  --button-background: #f0f0f0;
+  --button-background-hover: #e0e0e0;
+  --button-background-active: #e0e0e0;
 }
