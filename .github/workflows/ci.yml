@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  build_and_lint:
+  lint_and_build:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,8 +28,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run Build
-        run: pnpm run build
-
       - name: Run Lint
         run: pnpm run lint
+
+      - name: Run Build
+        run: pnpm run build
