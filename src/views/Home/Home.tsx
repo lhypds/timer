@@ -132,20 +132,13 @@ const HomeView = () => {
           hasStarted={hasStarted}
         />
         <div className={homeStyles.inner}>
-          <ModeSwitch
-            mode={mode}
-            onModeChange={handleModeChange}
-            buttonClass={homeStyles.button}
-            activeClass={homeStyles.buttonActive}
-          />
+          <ModeSwitch mode={mode} onModeChange={handleModeChange} />
           <Time
             value={formatTime(seconds)}
             onChange={mode === Mode.Timer ? handleInputChange : undefined}
             readOnly={mode === Mode.Stopwatch}
-            className={homeStyles.input}
-            style={{ textAlign: 'center' }}
           />
-          <TimeAdjust onAdjust={handleAdjust} buttonClass={homeStyles.button} />
+          <TimeAdjust onAdjust={handleAdjust} />
           <StartPause
             isRunning={isRunning}
             mode={mode}
@@ -154,7 +147,6 @@ const HomeView = () => {
             onStart={handleStart}
             onPause={handlePause}
             onReset={handleReset}
-            buttonClass={homeStyles.button}
           />
         </div>
       </div>

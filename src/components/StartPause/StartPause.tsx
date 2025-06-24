@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './start.module.css';
 
 interface StartPauseProps {
   isRunning: boolean;
@@ -18,8 +19,7 @@ const StartPause: React.FC<StartPauseProps> = ({
   initialSeconds,
   onStart,
   onPause,
-  onReset,
-  buttonClass = ''
+  onReset
 }) => {
   const showReset =
     mode === 'timer'
@@ -29,16 +29,16 @@ const StartPause: React.FC<StartPauseProps> = ({
   return (
     <div>
       {isRunning ? (
-        <button className={buttonClass} onClick={onPause}>
+        <button className={styles.button} onClick={onPause}>
           {'❚❚'}
         </button>
       ) : (
-        <button className={buttonClass} onClick={onStart}>
+        <button className={styles.button} onClick={onStart}>
           {'▶'}
         </button>
       )}
       {showReset && (
-        <button className={buttonClass} onClick={onReset}>
+        <button className={styles.button} onClick={onReset}>
           {'↻'}
         </button>
       )}

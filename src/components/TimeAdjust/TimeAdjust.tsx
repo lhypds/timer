@@ -1,14 +1,12 @@
 import React from 'react';
+import styles from './time.module.css';
 
 interface TimeAdjustProps {
   onAdjust: (amount: number) => void;
   buttonClass?: string;
 }
 
-const TimeAdjust: React.FC<TimeAdjustProps> = ({
-  onAdjust,
-  buttonClass = ''
-}) => {
+const TimeAdjust: React.FC<TimeAdjustProps> = ({ onAdjust }) => {
   const adjustments = [
     { amount: 30, label: '+0:30' },
     { amount: 60, label: '+1:00' },
@@ -20,7 +18,7 @@ const TimeAdjust: React.FC<TimeAdjustProps> = ({
       {adjustments.map(({ amount, label }) => (
         <button
           key={amount}
-          className={buttonClass}
+          className={`${styles.button}`}
           onClick={() => onAdjust(amount)}
         >
           {label}

@@ -1,23 +1,15 @@
 import React, { ChangeEvent } from 'react';
+import styles from './time.module.css';
 
 interface TimeProps {
   value: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   readOnly: boolean;
-  className?: string;
-  style?: React.CSSProperties;
 }
 
-const Time: React.FC<TimeProps> = ({
-  value,
-  onChange,
-  readOnly,
-  className,
-  style
-}) => (
+const Time: React.FC<TimeProps> = ({ value, onChange, readOnly }) => (
   <input
-    className={className}
-    style={style}
+    className={`${styles.input}`}
     value={value}
     onChange={onChange}
     readOnly={readOnly}
