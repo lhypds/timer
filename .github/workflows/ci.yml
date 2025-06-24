@@ -22,6 +22,11 @@ jobs:
         with:
           version: 8
 
+      - name: Set up .npmrc
+        run: |
+          echo "@linktivity:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
       - name: Install dependencies
         run: pnpm install
 
@@ -43,6 +48,11 @@ jobs:
       - uses: pnpm/action-setup@v3
         with:
           version: 8
+
+      - name: Set up .npmrc
+        run: |
+          echo "@linktivity:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
         run: pnpm install
