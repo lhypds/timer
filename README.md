@@ -9,4 +9,4 @@ Setup
 Run  
 `pnpm run dev`
 
-Originally copied from `link-frontend`.
+_Originally copied from `link-frontend`._
