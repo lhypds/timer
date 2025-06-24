@@ -8,5 +8,3 @@ Setup
 
 Run  
 `pnpm run dev`
-
-_Originally copied from `link-frontend`._
