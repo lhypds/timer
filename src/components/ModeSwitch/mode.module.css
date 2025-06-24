@@ -11,6 +11,6 @@
   }
 
   &.active {
-    background-color: var(--button-background);
+    background-color: var(--button-background-active);
   }
 }
