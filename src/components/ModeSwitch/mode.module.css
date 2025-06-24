@@ -5,12 +5,12 @@
   background-color: #f0f0f0;
   border: none;
   cursor: pointer;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
 }
 
-.button:hover {
-  background-color: #e0e0e0;
-}
-
-.buttonActive {
+.active {
   background-color: #e0e0e0;
 }
