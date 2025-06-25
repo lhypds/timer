@@ -19,6 +19,7 @@ import { getSetting } from '../../utils/settingsUtils';
 const TIMER_INTERVAL_MS = 1000;
 const RADIUS = 180;
 const STROKE = 4;
+const MAX_TIME_SECONDS = 99 * 60 + 59;
 
 const HomeView = () => {
   const [seconds, setSeconds] = useState<number>(getSetting('time') as number);
@@ -71,16 +72,18 @@ const HomeView = () => {
     return `${m}:${s}`;
   };
 
+  // Update handleInputChange to enforce max time
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const [m, s] = e.target.value.split(':').map(Number);
     if (!isNaN(m) && !isNaN(s)) {
-      const total = m * 60 + s;
+      const total = Math.min(m * 60 + s, MAX_TIME_SECONDS);
       setSeconds(total);
     }
   };
 
+  // Update handleAdjust to enforce max time
   const handleAdjust = (amount: number) =>
-    setSeconds(prev => Math.max(prev + amount, 0));
+    setSeconds(prev => Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS));
 
   // Handle numeric key input shifting digits into mm:ss format
   const handleTimeKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
@@ -89,13 +92,12 @@ const HomeView = () => {
       e.preventDefault();
       const digit = e.key;
       const buf = (inputBuffer ?? '') + digit;
-      // keep last 4 digits
       const newBuf = buf.length > 4 ? buf.slice(-4) : buf;
-      // pad to 4 for parsing
       const padded = newBuf.padStart(4, '0');
       const mm = parseInt(padded.slice(0, 2), 10);
       const ss = parseInt(padded.slice(2), 10);
-      setSeconds(mm * 60 + ss);
+      const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
+      setSeconds(totalSeconds);
       setInputBuffer(newBuf);
     }
   };
