@@ -3,7 +3,7 @@ import {
   useEffect,
   useCallback,
   ChangeEvent,
-  KeyboardEvent
+  KeyboardEvent as ReactKeyboardEvent
 } from 'react';
 import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
 import {
@@ -83,7 +83,7 @@ const HomeView = () => {
     setSeconds(prev => Math.max(prev + amount, 0));
 
   // Handle numeric key input shifting digits into mm:ss format
-  const handleTimeKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleTimeKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (mode !== Mode.Timer) return;
     if (e.key >= '0' && e.key <= '9') {
       e.preventDefault();
@@ -140,7 +140,7 @@ const HomeView = () => {
 
   // Keyboard shortcuts: Space to start/pause
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    function handleKeyDown(this: Window, e: KeyboardEvent) {
       if (e.code === 'Space') {
         e.preventDefault();
         if (isRunning) {
@@ -149,7 +149,7 @@ const HomeView = () => {
           handleStart();
         }
       }
-    };
+    }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isRunning, handlePause, handleStart, handleReset]);
