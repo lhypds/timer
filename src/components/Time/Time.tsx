@@ -26,6 +26,7 @@ const Time: React.FC<TimeProps> = ({
     onFocus={onFocus}
     onBlur={onBlur}
     readOnly={readOnly}
+    onMouseDown={readOnly ? e => e.preventDefault() : undefined}
   />
 );
 
