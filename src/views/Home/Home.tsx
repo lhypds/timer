@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback, ChangeEvent } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  ChangeEvent,
+  KeyboardEvent
+} from 'react';
 import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
 import {
   Mode,
@@ -19,7 +25,13 @@ const HomeView = () => {
   const [initialSeconds, setInitialSeconds] = useState<number>(
     getSetting('time') as number
   );
+
+  // Buffer for typed digits in timer mode
+  const [inputBuffer, setInputBuffer] = useState<string | null>(null);
+
+  // Mode can be 'timer' or 'stopwatch'
   const [mode, setMode] = useState<Mode>(getSetting('mode') as Mode);
+
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
 
@@ -69,6 +81,32 @@ const HomeView = () => {
 
   const handleAdjust = (amount: number) =>
     setSeconds(prev => Math.max(prev + amount, 0));
+
+  // Handle numeric key input shifting digits into mm:ss format
+  const handleTimeKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (mode !== Mode.Timer) return;
+    if (e.key >= '0' && e.key <= '9') {
+      e.preventDefault();
+      const digit = e.key;
+      const buf = (inputBuffer ?? '') + digit;
+      // keep last 4 digits
+      const newBuf = buf.length > 4 ? buf.slice(-4) : buf;
+      // pad to 4 for parsing
+      const padded = newBuf.padStart(4, '0');
+      const mm = parseInt(padded.slice(0, 2), 10);
+      const ss = parseInt(padded.slice(2), 10);
+      setSeconds(mm * 60 + ss);
+      setInputBuffer(newBuf);
+    }
+  };
+
+  // On focus, start editing buffer
+  const handleTimeFocus = () => {
+    if (mode === Mode.Timer) setInputBuffer('');
+  };
+
+  // On blur, clear buffer
+  const handleTimeBlur = () => setInputBuffer(null);
 
   // start the timer
   const handleStart = useCallback(() => {
@@ -142,6 +180,9 @@ const HomeView = () => {
             value={formatTime(seconds)}
             onChange={mode === Mode.Timer ? handleInputChange : undefined}
             readOnly={mode === Mode.Stopwatch}
+            onKeyDown={handleTimeKeyDown}
+            onFocus={handleTimeFocus}
+            onBlur={handleTimeBlur}
           />
           <TimeAdjust onAdjust={handleAdjust} />
           <StartPause
