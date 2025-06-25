@@ -22,16 +22,22 @@ const STROKE = 4;
 const MAX_TIME_SECONDS = 99 * 60 + 59;
 
 const HomeView = () => {
-  const [seconds, setSeconds] = useState<number>(getSetting('time') as number);
+  // Mode can be 'timer' or 'stopwatch'
+  const [mode, setMode] = useState<Mode>(getSetting('mode') as Mode);
+
+  const [seconds, setSeconds] = useState<number>(
+    (mode === Mode.Timer
+      ? getSetting('timer')
+      : getSetting('stopwatch')) as number
+  );
   const [initialSeconds, setInitialSeconds] = useState<number>(
-    getSetting('time') as number
+    (mode === Mode.Timer
+      ? getSetting('timer')
+      : getSetting('stopwatch')) as number
   );
 
   // Buffer for typed digits in timer mode
   const [inputBuffer, setInputBuffer] = useState<string | null>(null);
-
-  // Mode can be 'timer' or 'stopwatch'
-  const [mode, setMode] = useState<Mode>(getSetting('mode') as Mode);
 
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
@@ -40,7 +46,17 @@ const HomeView = () => {
     setIsRunning(false);
     setHasStarted(false);
     setMode(newMode);
-    setSeconds(newMode === Mode.Stopwatch ? 0 : initialSeconds);
+
+    if (newMode === Mode.Timer) {
+      setSeconds(getSetting('timer') as number);
+      setInitialSeconds(getSetting('timer') as number);
+      setInputBuffer(null);
+    }
+
+    if (newMode === Mode.Stopwatch) {
+      setSeconds(getSetting('stopwatch') as number);
+      setInitialSeconds(0);
+    }
   };
 
   useEffect(() => {
@@ -51,7 +67,9 @@ const HomeView = () => {
           () => setSeconds(prev => prev - 1),
           TIMER_INTERVAL_MS
         );
-      } else if (mode === Mode.Stopwatch) {
+      }
+
+      if (mode === Mode.Stopwatch) {
         timer = setInterval(
           () => setSeconds(prev => prev + 1),
           TIMER_INTERVAL_MS
@@ -158,8 +176,13 @@ const HomeView = () => {
 
   // Save time to localStorage whenever seconds change
   useEffect(() => {
-    localStorage.setItem('time', seconds.toString());
-  }, [seconds]);
+    if (mode === Mode.Timer) {
+      localStorage.setItem('timer', seconds.toString());
+    }
+    if (mode === Mode.Stopwatch) {
+      localStorage.setItem('stopwatch', seconds.toString());
+    }
+  }, [seconds, mode]);
 
   // Save mode to localStorage whenever mode changes
   useEffect(() => {
