@@ -134,8 +134,6 @@ const HomeView = () => {
     if (!hasStarted) {
       if (mode === Mode.Timer) {
         setInitialSeconds(seconds);
-      } else if (mode === Mode.Stopwatch) {
-        setSeconds(0);
       }
       setHasStarted(true);
     }
