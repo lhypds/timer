@@ -181,7 +181,7 @@ const HomeView = () => {
           <Time
             value={formatTime(seconds)}
             onChange={mode === Mode.Timer ? handleInputChange : undefined}
-            readOnly={mode === Mode.Stopwatch}
+            readOnly={isRunning || mode === Mode.Stopwatch}
             onKeyDown={handleTimeKeyDown}
             onFocus={handleTimeFocus}
             onBlur={handleTimeBlur}
