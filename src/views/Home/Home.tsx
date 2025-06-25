@@ -102,7 +102,7 @@ const HomeView = () => {
     setHasStarted(false);
   }, [mode, initialSeconds]);
 
-  // keyboard shortcuts: Space to start/pause, Backspace to reset
+  // keyboard shortcuts: Space to start/pause
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
@@ -112,9 +112,6 @@ const HomeView = () => {
         } else {
           handleStart();
         }
-      } else if (e.code === 'Backspace') {
-        e.preventDefault();
-        handleReset();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
