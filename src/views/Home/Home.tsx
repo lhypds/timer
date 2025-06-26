@@ -14,7 +14,11 @@ import Time from '../../components/Time/Time';
 import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
 import StartPause from '../../components/StartPause/StartPause';
 import homeStyles from './home.module.css';
-import { getSetting, setSetting } from '../../utils/settingsUtils';
+import {
+  getSetting,
+  initializeSettings,
+  setSetting
+} from '../../utils/settingsUtils';
 
 const TIMER_INTERVAL_MS = 1000;
 const RADIUS = 180;
@@ -30,12 +34,6 @@ const HomeView = () => {
       ? getSetting('timer')
       : getSetting('stopwatch')) as number
   );
-  const [initialSeconds, setInitialSeconds] = useState<number>(
-    (mode === Mode.Timer
-      ? getSetting('timer')
-      : getSetting('stopwatch')) as number
-  );
-
   // Buffer for typed digits in timer mode
   const [inputBuffer, setInputBuffer] = useState<string | null>(null);
 
@@ -49,15 +47,18 @@ const HomeView = () => {
 
     if (newMode === Mode.Timer) {
       setSeconds(getSetting('timer') as number);
-      setInitialSeconds(getSetting('timer') as number);
       setInputBuffer(null);
     }
 
     if (newMode === Mode.Stopwatch) {
       setSeconds(getSetting('stopwatch') as number);
-      setInitialSeconds(0);
     }
   };
+
+  useEffect(() => {
+    // Initialization
+    initializeSettings();
+  }, []);
 
   useEffect(() => {
     let timer: number;
@@ -76,9 +77,7 @@ const HomeView = () => {
         );
       }
     }
-    if (mode === Mode.Timer && seconds === 0) {
-      setIsRunning(false);
-    }
+
     return () => clearInterval(timer);
   }, [isRunning, seconds, mode]);
 
@@ -100,8 +99,17 @@ const HomeView = () => {
   };
 
   // Update handleAdjust to enforce max time
-  const handleAdjust = (amount: number) =>
-    setSeconds(prev => Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS));
+  const handleTimeAdjust = useCallback(
+    (amount: number) => {
+      if (!hasStarted) {
+        setSetting('timerInitial', seconds + amount);
+      }
+      setSeconds(prev =>
+        Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
+      );
+    },
+    [hasStarted, seconds]
+  );
 
   // Handle numeric key input shifting digits into mm:ss format
   const handleTimeKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
@@ -116,6 +124,7 @@ const HomeView = () => {
       const ss = parseInt(padded.slice(2), 10);
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
+      setSetting('timerInitial', totalSeconds);
       setInputBuffer(newBuf);
     } else if (e.key === 'Backspace') {
       e.preventDefault();
@@ -126,6 +135,7 @@ const HomeView = () => {
       const ss = parseInt(padded.slice(2), 10);
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
+      setSetting('timerInitial', totalSeconds);
       setInputBuffer(newBuf);
     }
   };
@@ -133,24 +143,23 @@ const HomeView = () => {
   // On focus, start editing buffer
   const handleTimeFocus = () => {
     if (mode === Mode.Timer) {
-      setInputBuffer(formatTime(seconds).replace(':', ''));
+      setInputBuffer('0000');
     }
   };
 
   // On blur, clear buffer
-  const handleTimeBlur = () => setInputBuffer(null);
+  const handleTimeBlur = () => {
+    setInputBuffer(null);
+  };
 
   // start the timer
   const handleStart = useCallback(() => {
     // on first start, initialize timer/stopwatch; on resume skip resets
     if (!hasStarted) {
-      if (mode === Mode.Timer) {
-        setInitialSeconds(seconds);
-      }
       setHasStarted(true);
     }
     setIsRunning(true);
-  }, [mode, seconds, hasStarted]);
+  }, [hasStarted]);
 
   // Pause the timer
   const handlePause = useCallback(() => {
@@ -160,36 +169,54 @@ const HomeView = () => {
   // Reset the timer to initial value
   const handleReset = useCallback(() => {
     if (mode === Mode.Timer) {
-      setSeconds(initialSeconds);
-    } else {
+      setSeconds(getSetting('timerInitial') as number);
+    }
+
+    if (mode === Mode.Stopwatch) {
       setSeconds(0);
     }
     setIsRunning(false);
     setHasStarted(false);
     document.body.style.backgroundColor = '';
-  }, [mode, initialSeconds]);
+  }, [mode]);
 
-  // Keyboard shortcuts: Enter to start/pause
-  useEffect(() => {
-    function handleKeyDown(this: Window, e: KeyboardEvent) {
-      if (e.code === 'Enter') {
+  // Handle keydown event
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
         e.preventDefault();
+
+        // Blur input
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement.tagName === 'INPUT') {
+          activeElement.blur();
+        }
+
         if (isRunning) {
           handlePause();
         } else {
           handleStart();
         }
       }
-    }
+    },
+    [isRunning, handleStart, handlePause]
+  );
+
+  useEffect(() => {
+    // Handle keydown event
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, handlePause, handleStart, handleReset]);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   // Save time
   useEffect(() => {
     if (mode === Mode.Timer) {
       setSetting('timer', seconds);
     }
+
     if (mode === Mode.Stopwatch) {
       setSetting('stopwatch', seconds);
     }
@@ -218,7 +245,7 @@ const HomeView = () => {
   useEffect(() => {
     let flashInterval: number | undefined;
 
-    if (mode === Mode.Timer && seconds === 0) {
+    if (mode === Mode.Timer && seconds === 0 && isRunning) {
       const flashBackground = () => {
         document.body.style.backgroundColor =
           document.body.style.backgroundColor === 'lightgray'
@@ -234,7 +261,7 @@ const HomeView = () => {
       }
       document.body.style.backgroundColor = '';
     };
-  }, [seconds, mode]);
+  }, [isRunning, seconds, mode]);
 
   return (
     <div className={homeStyles.home}>
@@ -243,7 +270,7 @@ const HomeView = () => {
           radius={RADIUS}
           stroke={STROKE}
           seconds={seconds}
-          initialSeconds={initialSeconds}
+          initialSeconds={getSetting('timerInitial') as number}
           hasStarted={hasStarted}
         />
         <div className={homeStyles.inner}>
@@ -256,12 +283,12 @@ const HomeView = () => {
             onFocus={handleTimeFocus}
             onBlur={handleTimeBlur}
           />
-          <TimeAdjust onAdjust={handleAdjust} />
+          <TimeAdjust onAdjust={handleTimeAdjust} />
           <StartPause
             isRunning={isRunning}
             mode={mode}
             seconds={seconds}
-            initialSeconds={initialSeconds}
+            initialSeconds={getSetting('timerInitial') as number}
             onStart={handleStart}
             onPause={handlePause}
             onReset={handleReset}
