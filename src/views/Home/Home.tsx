@@ -14,7 +14,7 @@ import Time from '../../components/Time/Time';
 import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
 import StartPause from '../../components/StartPause/StartPause';
 import homeStyles from './home.module.css';
-import { getSetting } from '../../utils/settingsUtils';
+import { getSetting, setSetting } from '../../utils/settingsUtils';
 
 const TIMER_INTERVAL_MS = 1000;
 const RADIUS = 180;
@@ -117,6 +117,16 @@ const HomeView = () => {
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
       setInputBuffer(newBuf);
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      const buf = inputBuffer ?? '';
+      const newBuf = buf.slice(0, -1);
+      const padded = newBuf.padStart(4, '0');
+      const mm = parseInt(padded.slice(0, 2), 10);
+      const ss = parseInt(padded.slice(2), 10);
+      const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
+      setSeconds(totalSeconds);
+      setInputBuffer(newBuf);
     }
   };
 
@@ -172,19 +182,19 @@ const HomeView = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isRunning, handlePause, handleStart, handleReset]);
 
-  // Save time to localStorage whenever seconds change
+  // Save time
   useEffect(() => {
     if (mode === Mode.Timer) {
-      localStorage.setItem('timer', seconds.toString());
+      setSetting('timer', seconds);
     }
     if (mode === Mode.Stopwatch) {
-      localStorage.setItem('stopwatch', seconds.toString());
+      setSetting('stopwatch', seconds);
     }
   }, [seconds, mode]);
 
-  // Save mode to localStorage whenever mode changes
+  // Save mode
   useEffect(() => {
-    localStorage.setItem('mode', mode);
+    setSetting('mode', mode);
   }, [mode]);
 
   return (

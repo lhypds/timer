@@ -19,3 +19,17 @@ export const getSetting = (key: string) => {
     return mode ? (mode as Mode) : MODE_INIT;
   }
 };
+
+export const setSetting = (key: string, value: string | number) => {
+  if (key === 'timer' || key === 'stopwatch') {
+    sessionStorage.setItem(key, value.toString());
+  } else if (key === 'mode') {
+    if (Object.values(Mode).includes(value as Mode)) {
+      sessionStorage.setItem(key, value as Mode);
+    } else {
+      console.warn(`Invalid mode: ${value}`);
+    }
+  } else {
+    console.warn(`Unknown setting key: ${key}`);
+  }
+};
