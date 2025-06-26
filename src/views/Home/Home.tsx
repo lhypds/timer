@@ -199,6 +199,20 @@ const HomeView = () => {
     setSetting('mode', mode);
   }, [mode]);
 
+  // Prevent page unload if timer is running
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isRunning) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isRunning]);
+
   return (
     <div className={homeStyles.home}>
       <div className={homeStyles.circle}>
