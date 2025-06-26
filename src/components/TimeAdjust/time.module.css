@@ -7,6 +7,6 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--button-hover-background);
+    background-color: var(--button-background-hover);
   }
 }

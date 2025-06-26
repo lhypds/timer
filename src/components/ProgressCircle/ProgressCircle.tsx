@@ -22,10 +22,12 @@ const ProgressCircle: React.FC<ProgressCircleProps> = ({
   );
 
   const secsForProgress = hasStarted ? seconds : initialSeconds;
-  const strokeDashoffset = useMemo(
-    () => circumference - (secsForProgress / initialSeconds) * circumference,
-    [circumference, secsForProgress, initialSeconds]
-  );
+  const strokeDashoffset = useMemo(() => {
+    if (initialSeconds === 0) {
+      return circumference; // Default to full circumference if initialSeconds is 0
+    }
+    return circumference - (secsForProgress / initialSeconds) * circumference;
+  }, [circumference, secsForProgress, initialSeconds]);
 
   return (
     <svg height={radius * 2} width={radius * 2}>
