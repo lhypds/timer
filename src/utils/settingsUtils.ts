@@ -9,6 +9,11 @@ export const getSetting = (key: string) => {
     return time ? parseInt(time, 10) : SECONDS_INIT;
   }
 
+  if (key === 'timerInitial') {
+    const time = sessionStorage.getItem('timerInitial');
+    return time ? parseInt(time, 10) : SECONDS_INIT;
+  }
+
   if (key === 'stopwatch') {
     const time = sessionStorage.getItem('stopwatch');
     return time ? parseInt(time, 10) : 0;
@@ -21,15 +26,34 @@ export const getSetting = (key: string) => {
 };
 
 export const setSetting = (key: string, value: string | number) => {
-  if (key === 'timer' || key === 'stopwatch') {
+  if (key === 'timer' || key === 'timerInitial' || key === 'stopwatch') {
     sessionStorage.setItem(key, value.toString());
-  } else if (key === 'mode') {
+    return;
+  }
+
+  if (key === 'mode') {
     if (Object.values(Mode).includes(value as Mode)) {
       sessionStorage.setItem(key, value as Mode);
     } else {
       console.warn(`Invalid mode: ${value}`);
     }
-  } else {
-    console.warn(`Unknown setting key: ${key}`);
+    return;
+  }
+
+  console.warn(`Unknown setting key: ${key}`);
+};
+
+export const initializeSettings = () => {
+  if (sessionStorage.getItem('timer') === null) {
+    sessionStorage.setItem('timer', SECONDS_INIT.toString());
+  }
+  if (sessionStorage.getItem('timerInitial') === null) {
+    sessionStorage.setItem('timerInitial', SECONDS_INIT.toString());
+  }
+  if (sessionStorage.getItem('stopwatch') === null) {
+    sessionStorage.setItem('stopwatch', '0');
+  }
+  if (sessionStorage.getItem('mode') === null) {
+    sessionStorage.setItem('mode', MODE_INIT);
   }
 };
