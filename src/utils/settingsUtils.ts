@@ -6,17 +6,17 @@ const MODE_INIT = Mode.Timer;
 export const getSetting = (key: string) => {
   if (key === 'timer') {
     const time = sessionStorage.getItem('timer');
-    return time ? parseInt(time, 10) : SECONDS_INIT;
+    return time ? parseFloat(time) : SECONDS_INIT;
   }
 
   if (key === 'timerInitial') {
     const time = sessionStorage.getItem('timerInitial');
-    return time ? parseInt(time, 10) : SECONDS_INIT;
+    return time ? parseFloat(time) : SECONDS_INIT;
   }
 
   if (key === 'stopwatch') {
     const time = sessionStorage.getItem('stopwatch');
-    return time ? parseInt(time, 10) : 0;
+    return time ? parseFloat(time) : 0;
   }
 
   if (key === 'mode') {
