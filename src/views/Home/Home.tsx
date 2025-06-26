@@ -91,7 +91,7 @@ const HomeView = () => {
   }, [isRunning, seconds, mode]);
 
   const formatTime = (secs: number) => {
-    const secsInt = Math.floor(secs);
+    const secsInt = Math.max(0, Math.floor(secs));
     const m = Math.floor(secsInt / 60)
       .toString()
       .padStart(2, '0');
@@ -237,8 +237,13 @@ const HomeView = () => {
 
     if (mode === Mode.Stopwatch) {
       setSetting('stopwatch', seconds);
+
+      // Stop the stopwatch if seconds larger than 99:59
+      if (seconds >= MAX_TIME_SECONDS) {
+        handlePause();
+      }
     }
-  }, [seconds, mode]);
+  }, [seconds, mode, handlePause]);
 
   // Save mode
   useEffect(() => {
@@ -263,7 +268,7 @@ const HomeView = () => {
   useEffect(() => {
     let flashInterval: number | undefined;
 
-    if (mode === Mode.Timer && seconds === 0 && isRunning) {
+    if (mode === Mode.Timer && seconds <= 0.001 && isRunning) {
       const flashBackground = () => {
         document.body.style.backgroundColor =
           document.body.style.backgroundColor === 'lightgray'
@@ -288,12 +293,16 @@ const HomeView = () => {
         <div className={homeStyles.inner}>
           <ModeSwitch mode={mode} onModeChange={handleModeChange} />
           <Time
-            value={formatTime(seconds)}
+            seconds={formatTime(seconds)}
+            milliseconds={Math.floor((seconds % 1) * 100)
+              .toString()
+              .padStart(2, '0')}
             onChange={mode === Mode.Timer ? handleInputChange : undefined}
             readOnly={isRunning || mode === Mode.Stopwatch}
             onKeyDown={handleTimeKeyDown}
             onFocus={handleTimeFocus}
             onBlur={handleTimeBlur}
+            mode={mode}
           />
           <TimeAdjust onAdjust={handleTimeAdjust} />
           <StartPause

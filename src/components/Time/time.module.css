@@ -1,6 +1,6 @@
 .input {
   font-size: 60px;
-  width: 320px;
+  width: 180px;
   max-width: 100%;
   text-align: center;
   caret-color: transparent;
@@ -12,4 +12,19 @@
     text-decoration: underline;
     text-decoration-thickness: 2px;
   }
+}
+
+.timeContainer {
+  display: flex;
+  align-items: baseline;
+}
+
+.milliseconds {
+  width: 40px;
+  font-size: 24px;
+  color: var(--text-color-secondary);
+}
+
+.placeholder {
+  width: 40px;
 }

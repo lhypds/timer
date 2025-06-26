@@ -10,7 +10,7 @@ Run
 
 ## How to use
 
-Click the time, use numberic keys to set the time, and then press `Enter` to start the timer.
+Click the time, use numeric keys and `Backspace` key to edit the time, and then press `▶︎` or `Enter` key to start the timer.
 
 Shortcuts  
 Use `Enter` key to start/stop the timer.
