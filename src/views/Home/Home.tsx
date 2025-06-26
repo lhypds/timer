@@ -20,20 +20,28 @@ import {
   setSetting
 } from '../../utils/settingsUtils';
 
-const TIMER_INTERVAL_MS = 1000;
-const RADIUS = 180;
-const STROKE = 4;
+const TIMER_INTERVAL_MS = 1;
 const MAX_TIME_SECONDS = 99 * 60 + 59;
 
 const HomeView = () => {
   // Mode can be 'timer' or 'stopwatch'
   const [mode, setMode] = useState<Mode>(getSetting('mode') as Mode);
 
+  // Time in seconds
   const [seconds, setSeconds] = useState<number>(
     (mode === Mode.Timer
       ? getSetting('timer')
       : getSetting('stopwatch')) as number
   );
+
+  // Progress circle
+  const [circleSeconds, setCircleSeconds] = useState<number>(0);
+  useEffect(() => {
+    setCircleSeconds(
+      mode === Mode.Timer ? (getSetting('timerInitial') as number) : 60
+    );
+  }, [mode]);
+
   // Buffer for typed digits in timer mode
   const [inputBuffer, setInputBuffer] = useState<string | null>(null);
 
@@ -60,19 +68,20 @@ const HomeView = () => {
     initializeSettings();
   }, []);
 
+  // Time update
   useEffect(() => {
     let timer: number;
     if (isRunning) {
       if (mode === Mode.Timer && seconds > 0) {
         timer = setInterval(
-          () => setSeconds(prev => prev - 1),
+          () => setSeconds(prev => prev - 0.001),
           TIMER_INTERVAL_MS
         );
       }
 
       if (mode === Mode.Stopwatch) {
         timer = setInterval(
-          () => setSeconds(prev => prev + 1),
+          () => setSeconds(prev => prev + 0.001),
           TIMER_INTERVAL_MS
         );
       }
@@ -82,14 +91,15 @@ const HomeView = () => {
   }, [isRunning, seconds, mode]);
 
   const formatTime = (secs: number) => {
-    const m = Math.floor(secs / 60)
+    const secsInt = Math.floor(secs);
+    const m = Math.floor(secsInt / 60)
       .toString()
       .padStart(2, '0');
-    const s = (secs % 60).toString().padStart(2, '0');
+    const s = (secsInt % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   };
 
-  // Update handleInputChange to enforce max time
+  // Handle input change
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const [m, s] = e.target.value.split(':').map(Number);
     if (!isNaN(m) && !isNaN(s)) {
@@ -98,7 +108,7 @@ const HomeView = () => {
     }
   };
 
-  // Update handleAdjust to enforce max time
+  // Update to enforce max time
   const handleTimeAdjust = useCallback(
     (amount: number) => {
       if (!hasStarted) {
@@ -107,8 +117,14 @@ const HomeView = () => {
       setSeconds(prev =>
         Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
       );
+
+      if (mode === Mode.Timer) {
+        setCircleSeconds(prev =>
+          Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
+        );
+      }
     },
-    [hasStarted, seconds]
+    [hasStarted, seconds, mode]
   );
 
   // Handle numeric key input shifting digits into mm:ss format
@@ -125,6 +141,7 @@ const HomeView = () => {
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
       setSetting('timerInitial', totalSeconds);
+      setCircleSeconds(totalSeconds);
       setInputBuffer(newBuf);
     } else if (e.key === 'Backspace') {
       e.preventDefault();
@@ -136,6 +153,7 @@ const HomeView = () => {
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
       setSetting('timerInitial', totalSeconds);
+      setCircleSeconds(totalSeconds);
       setInputBuffer(newBuf);
     }
   };
@@ -266,13 +284,7 @@ const HomeView = () => {
   return (
     <div className={homeStyles.home}>
       <div className={homeStyles.circle}>
-        <ProgressCircle
-          radius={RADIUS}
-          stroke={STROKE}
-          seconds={seconds}
-          initialSeconds={getSetting('timerInitial') as number}
-          hasStarted={hasStarted}
-        />
+        <ProgressCircle seconds={seconds} circleSeconds={circleSeconds} />
         <div className={homeStyles.inner}>
           <ModeSwitch mode={mode} onModeChange={handleModeChange} />
           <Time

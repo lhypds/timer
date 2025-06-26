@@ -1,53 +1,48 @@
 import React, { useMemo } from 'react';
 
 interface ProgressCircleProps {
-  radius: number;
-  stroke: number;
   seconds: number;
-  initialSeconds: number;
-  hasStarted: boolean;
+  circleSeconds: number;
 }
 
-const ProgressCircle: React.FC<ProgressCircleProps> = ({
-  radius,
-  stroke,
-  seconds,
-  initialSeconds,
-  hasStarted
-}) => {
-  const normalizedRadius = useMemo(() => radius - stroke / 2, [radius, stroke]);
-  const circumference = useMemo(
-    () => normalizedRadius * 2 * Math.PI,
-    [normalizedRadius]
-  );
+const RADIUS = 180;
+const STROKE_WIDTH = 4;
 
-  const secsForProgress = hasStarted ? seconds : initialSeconds;
+const ProgressCircle: React.FC<ProgressCircleProps> = ({
+  seconds,
+  circleSeconds
+}) => {
+  const normalizedRadius = RADIUS - STROKE_WIDTH / 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+
+  const secsForProgress = seconds;
+
   const strokeDashoffset = useMemo(() => {
-    if (initialSeconds === 0) {
+    if (circleSeconds === 0) {
       return circumference; // Default to full circumference if initialSeconds is 0
     }
-    return circumference - (secsForProgress / initialSeconds) * circumference;
-  }, [circumference, secsForProgress, initialSeconds]);
+    return circumference - (secsForProgress / circleSeconds) * circumference;
+  }, [circumference, secsForProgress, circleSeconds]);
 
   return (
-    <svg height={radius * 2} width={radius * 2}>
+    <svg height={RADIUS * 2} width={RADIUS * 2}>
       <circle
         stroke="#e6e6e6"
         fill="transparent"
-        strokeWidth={stroke}
+        strokeWidth={STROKE_WIDTH}
         r={normalizedRadius}
-        cx={radius}
-        cy={radius}
+        cx={RADIUS}
+        cy={RADIUS}
       />
       <circle
         stroke="#6b6b6b"
         fill="transparent"
-        strokeWidth={stroke}
+        strokeWidth={STROKE_WIDTH}
         strokeDasharray={`${circumference} ${circumference}`}
         style={{ strokeDashoffset }}
         r={normalizedRadius}
-        cx={radius}
-        cy={radius}
+        cx={RADIUS}
+        cy={RADIUS}
       />
     </svg>
   );
