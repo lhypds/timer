@@ -168,10 +168,10 @@ const HomeView = () => {
     setHasStarted(false);
   }, [mode, initialSeconds]);
 
-  // Keyboard shortcuts: Space to start/pause
+  // Keyboard shortcuts: Enter to start/pause
   useEffect(() => {
     function handleKeyDown(this: Window, e: KeyboardEvent) {
-      if (e.code === 'Space') {
+      if (e.code === 'Enter') {
         e.preventDefault();
         if (isRunning) {
           handlePause();

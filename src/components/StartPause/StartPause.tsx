@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './start.module.css';
+import Button from '../ui/Button/Button';
 
 interface StartPauseProps {
   isRunning: boolean;
@@ -9,7 +10,6 @@ interface StartPauseProps {
   onStart: () => void;
   onPause: () => void;
   onReset: () => void;
-  buttonClass?: string;
 }
 
 const StartPause: React.FC<StartPauseProps> = ({
@@ -29,18 +29,18 @@ const StartPause: React.FC<StartPauseProps> = ({
   return (
     <div>
       {isRunning ? (
-        <button className={styles.button} onClick={onPause}>
-          {'❚❚'}
-        </button>
+        <Button onClick={onPause}>
+          <span className={styles.icon}>⏸</span>
+        </Button>
       ) : (
-        <button className={styles.button} onClick={onStart}>
-          {'▶'}
-        </button>
+        <Button onClick={onStart}>
+          <span className={styles.icon}>▶</span>
+        </Button>
       )}
       {showReset && (
-        <button className={styles.button} onClick={onReset}>
-          {'↻'}
-        </button>
+        <Button onClick={onReset}>
+          <span className={styles.icon}>↻</span>
+        </Button>
       )}
     </div>
   );
