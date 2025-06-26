@@ -1,10 +1,11 @@
 import React from 'react';
 import styles from './start.module.css';
 import Button from '../ui/Button/Button';
+import { Mode } from '../ModeSwitch/ModeSwitch';
 
 interface StartPauseProps {
   isRunning: boolean;
-  mode: 'timer' | 'stopwatch';
+  mode: Mode;
   seconds: number;
   initialSeconds: number;
   onStart: () => void;
