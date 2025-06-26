@@ -132,7 +132,9 @@ const HomeView = () => {
 
   // On focus, start editing buffer
   const handleTimeFocus = () => {
-    if (mode === Mode.Timer) setInputBuffer('');
+    if (mode === Mode.Timer) {
+      setInputBuffer(formatTime(seconds).replace(':', ''));
+    }
   };
 
   // On blur, clear buffer
