@@ -166,6 +166,7 @@ const HomeView = () => {
     }
     setIsRunning(false);
     setHasStarted(false);
+    document.body.style.backgroundColor = '';
   }, [mode, initialSeconds]);
 
   // Keyboard shortcuts: Enter to start/pause
@@ -212,6 +213,28 @@ const HomeView = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [isRunning]);
+
+  // Flash background when timer finishes
+  useEffect(() => {
+    let flashInterval: number | undefined;
+
+    if (mode === Mode.Timer && seconds === 0) {
+      const flashBackground = () => {
+        document.body.style.backgroundColor =
+          document.body.style.backgroundColor === 'lightgray'
+            ? ''
+            : 'lightgray';
+      };
+      flashInterval = window.setInterval(flashBackground, 500); // use window.setInterval for clarity
+    }
+
+    return () => {
+      if (flashInterval !== undefined) {
+        clearInterval(flashInterval);
+      }
+      document.body.style.backgroundColor = '';
+    };
+  }, [seconds, mode]);
 
   return (
     <div className={homeStyles.home}>
