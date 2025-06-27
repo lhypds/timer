@@ -27,16 +27,17 @@ const MAX_TIME_SECONDS = 99 * 60 + 59;
 
 const HomeView = () => {
   // Mode can be 'timer' or 'stopwatch'
-  const [mode, setMode] = useState<Mode>(getSetting('mode') as Mode);
+  const [mode, setMode] = useState<Mode>(() => getSetting('mode') as Mode);
   useEffect(() => {
     setSetting('mode', mode);
   }, [mode]);
 
   // Time in seconds
   const [seconds, setSeconds] = useState<number>(
-    (mode === Mode.Timer
-      ? getSetting('timer')
-      : getSetting('stopwatch')) as number
+    () =>
+      (mode === Mode.Timer
+        ? getSetting('timer')
+        : getSetting('stopwatch')) as number
   );
   useEffect(() => {
     if (mode === Mode.Timer) {
@@ -50,7 +51,7 @@ const HomeView = () => {
 
   // Initial time for timer mode
   const [timerInitial, setTimerInitial] = useState<number>(
-    getSetting('timerInitial') as number
+    () => getSetting('timerInitial') as number
   );
   useEffect(() => {
     setSetting('timerInitial', timerInitial);
