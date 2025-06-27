@@ -1,0 +1,26 @@
+.container {
+  height: 130px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  width: 36px;
+  margin: 8px 4px;
+  padding: 12px 0px;
+  border-radius: 24px;
+  background-color: var(--button-background);
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
+
+  &.active {
+    background-color: var(--button-background-active);
+  }
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../ui/Button/Button';
+import styles from './adjust.module.css';
 
 interface TimeAdjustProps {
   onAdjust: (amount: number) => void;
@@ -13,7 +14,7 @@ const TimeAdjust: React.FC<TimeAdjustProps> = ({ onAdjust }) => {
   ];
 
   return (
-    <div>
+    <div className={styles.container}>
       {adjustments.map(({ amount, label }) => (
         <Button key={amount} onClick={() => onAdjust(amount)}>
           {label}
