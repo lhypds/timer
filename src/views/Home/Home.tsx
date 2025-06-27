@@ -13,6 +13,7 @@ import {
 } from '../../components/ModeSwitch/ModeSwitch';
 import Time from '../../components/Time/Time';
 import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
+import Keypad from '../../components/Keypad/Keypad';
 import StartPause from '../../components/StartPause/StartPause';
 import homeStyles from './home.module.css';
 import {
@@ -67,6 +68,7 @@ const HomeView = () => {
 
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleModeChange = (newMode: Mode) => {
     setIsRunning(false);
@@ -199,12 +201,14 @@ const HomeView = () => {
   const handleTimeFocus = () => {
     if (mode === Mode.Timer) {
       setInputBuffer('0000');
+      setIsEditing(true);
     }
   };
 
   // On blur, clear buffer
   const handleTimeBlur = () => {
     setInputBuffer(null);
+    setIsEditing(false);
   };
 
   // start the timer
@@ -255,6 +259,52 @@ const HomeView = () => {
       }
     },
     [isRunning, handleStart, handlePause]
+  );
+
+  // Handle keypad input
+  const handleKeypadPress = useCallback(
+    (value: string | number) => {
+      if (mode !== Mode.Timer) return;
+
+      if (typeof value === 'number') {
+        const buf = (inputBuffer ?? '') + value.toString();
+        const newBuf = buf.length > 4 ? buf.slice(-4) : buf;
+        const padded = newBuf.padStart(4, '0');
+        const mm = parseInt(padded.slice(0, 2), 10);
+        const ss = parseInt(padded.slice(2), 10);
+        const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
+
+        setSeconds(totalSeconds);
+        setTimerInitial(totalSeconds);
+        setCircleSeconds(totalSeconds);
+        setInputBuffer(newBuf);
+      } else if (value === 'Backspace') {
+        const buf = inputBuffer ?? '';
+        const newBuf = buf.slice(0, -1);
+        const padded = newBuf.padStart(4, '0');
+        const mm = parseInt(padded.slice(0, 2), 10);
+        const ss = parseInt(padded.slice(2), 10);
+        const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
+
+        setSeconds(totalSeconds);
+        setTimerInitial(totalSeconds);
+        setCircleSeconds(totalSeconds);
+        setInputBuffer(newBuf);
+      } else if (value === 'Enter') {
+        // Blur input
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement.tagName === 'INPUT') {
+          activeElement.blur();
+        }
+
+        if (isRunning) {
+          handlePause();
+        } else {
+          handleStart();
+        }
+      }
+    },
+    [mode, inputBuffer, handleStart, handlePause, isRunning]
   );
 
   useEffect(() => {
@@ -320,16 +370,21 @@ const HomeView = () => {
             onBlur={handleTimeBlur}
             mode={mode}
           />
-          <TimeAdjust onAdjust={handleTimeAdjust} />
-          <StartPause
-            isRunning={isRunning}
-            mode={mode}
-            seconds={seconds}
-            initialSeconds={timerInitial}
-            onStart={handleStart}
-            onPause={handlePause}
-            onReset={handleReset}
-          />
+          {isEditing && <Keypad onKeyPress={handleKeypadPress} />}
+          {!isEditing && (
+            <>
+              <TimeAdjust onAdjust={handleTimeAdjust} />
+              <StartPause
+                isRunning={isRunning}
+                mode={mode}
+                seconds={seconds}
+                initialSeconds={timerInitial}
+                onStart={handleStart}
+                onPause={handlePause}
+                onReset={handleReset}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

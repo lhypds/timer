@@ -28,7 +28,7 @@ const StartPause: React.FC<StartPauseProps> = ({
       : isRunning || seconds > 0;
 
   return (
-    <div>
+    <div className={styles.container}>
       {isRunning ? (
         <Button onClick={onPause}>
           <span className={styles.icon}>⏸</span>
