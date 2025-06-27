@@ -14,23 +14,47 @@
   }
 }
 
-.timeContainer {
+.container {
+  height: 92px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
 }
 
 .milliseconds {
   width: 40px;
-  font-size: 24px;
+  height: 56px;
+  font-size: 20px;
   color: var(--text-color-secondary);
+  display: flex;
+  align-items: flex-end;
 }
 
 .timerInitial {
   width: 40px;
+  height: 56px;
   font-size: 20px;
   color: var(--text-color-secondary);
+  display: flex;
+  align-items: flex-end;
 }
 
 .placeholder {
   width: 40px;
+  height: 60px;
+}
+
+.waveDash {
+  width: 40px;
+  height: 60px;
+  font-size: 56px;
+  color: var(--text-color-secondary);
+  border: 1px dashed var(--text-color-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.waveDashPlaceholder {
+  width: 40px;
+  height: 60px;
+  border: 1px dashed var(--text-color-secondary);
 }
