@@ -146,20 +146,21 @@ const HomeView = () => {
   // Update to enforce max time
   const handleTimeAdjust = useCallback(
     (amount: number) => {
-      if (!hasStarted) {
-        setTimerInitial(seconds + amount);
-      }
       setSeconds(prev =>
         Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
       );
 
       if (mode === Mode.Timer) {
+        setTimerInitial(prev =>
+          Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
+        );
+
         setCircleSeconds(prev =>
           Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
         );
       }
     },
-    [hasStarted, seconds, mode]
+    [mode]
   );
 
   // Handle numeric key input shifting digits into mm:ss format
