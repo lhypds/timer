@@ -4,6 +4,7 @@ import { Mode } from '../ModeSwitch/ModeSwitch';
 
 interface TimeProps {
   seconds: string;
+  timerInitial: string;
   milliseconds: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   readOnly: boolean;
@@ -15,6 +16,7 @@ interface TimeProps {
 
 const Time: React.FC<TimeProps> = ({
   seconds,
+  timerInitial,
   milliseconds,
   onChange,
   readOnly,
@@ -24,7 +26,7 @@ const Time: React.FC<TimeProps> = ({
   mode
 }) => (
   <div className={styles.timeContainer}>
-    {mode === Mode.Stopwatch && <div className={styles.placeholder}></div>}
+    <div className={styles.placeholder}></div>
     <input
       className={`${styles.input}`}
       value={seconds}
@@ -38,6 +40,9 @@ const Time: React.FC<TimeProps> = ({
     />
     {mode === Mode.Stopwatch && (
       <span className={styles.milliseconds}>.{milliseconds}</span>
+    )}
+    {mode === Mode.Timer && (
+      <span className={styles.timerInitial}>/{timerInitial}</span>
     )}
   </div>
 );
