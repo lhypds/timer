@@ -15,7 +15,7 @@ import Time from '../../components/Time/Time';
 import TimeAdjust from '../../components/TimeAdjust/TimeAdjust';
 import Keypad from '../../components/Keypad/Keypad';
 import StartPause from '../../components/StartPause/StartPause';
-import homeStyles from './home.module.css';
+import styles from './home.module.css';
 import {
   getSetting,
   initializeSettings,
@@ -353,38 +353,40 @@ const HomeView = () => {
   }, [isRunning, seconds, mode]);
 
   return (
-    <div className={homeStyles.home}>
-      <div className={homeStyles.circle}>
-        <ProgressCircle seconds={seconds} circleSeconds={circleSeconds} />
-        <div className={homeStyles.inner}>
-          <ModeSwitch mode={mode} onModeChange={handleModeChange} />
-          <Time
-            seconds={formatTime(seconds)}
-            milliseconds={Math.floor((seconds % 1) * 100)
-              .toString()
-              .padStart(2, '0')}
-            onChange={mode === Mode.Timer ? handleInputChange : undefined}
-            readOnly={isRunning || mode === Mode.Stopwatch}
-            onKeyDown={handleTimeKeyDown}
-            onFocus={handleTimeFocus}
-            onBlur={handleTimeBlur}
-            mode={mode}
-          />
-          {isEditing && <Keypad onKeyPress={handleKeypadPress} />}
-          {!isEditing && (
-            <>
-              <TimeAdjust onAdjust={handleTimeAdjust} />
-              <StartPause
-                isRunning={isRunning}
-                mode={mode}
-                seconds={seconds}
-                initialSeconds={timerInitial}
-                onStart={handleStart}
-                onPause={handlePause}
-                onReset={handleReset}
-              />
-            </>
-          )}
+    <div className={styles.home}>
+      <div className={styles.container}>
+        <div className={styles.circle}>
+          <ProgressCircle seconds={seconds} circleSeconds={circleSeconds} />
+          <div className={styles.inner}>
+            <ModeSwitch mode={mode} onModeChange={handleModeChange} />
+            <Time
+              seconds={formatTime(seconds)}
+              milliseconds={Math.floor((seconds % 1) * 100)
+                .toString()
+                .padStart(2, '0')}
+              onChange={mode === Mode.Timer ? handleInputChange : undefined}
+              readOnly={isRunning || mode === Mode.Stopwatch}
+              onKeyDown={handleTimeKeyDown}
+              onFocus={handleTimeFocus}
+              onBlur={handleTimeBlur}
+              mode={mode}
+            />
+            {isEditing && <Keypad onKeyPress={handleKeypadPress} />}
+            {!isEditing && (
+              <>
+                <TimeAdjust onAdjust={handleTimeAdjust} />
+                <StartPause
+                  isRunning={isRunning}
+                  mode={mode}
+                  seconds={seconds}
+                  initialSeconds={timerInitial}
+                  onStart={handleStart}
+                  onPause={handlePause}
+                  onReset={handleReset}
+                />
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
