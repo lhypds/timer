@@ -28,6 +28,9 @@ const MAX_TIME_SECONDS = 99 * 60 + 59;
 const HomeView = () => {
   // Mode can be 'timer' or 'stopwatch'
   const [mode, setMode] = useState<Mode>(getSetting('mode') as Mode);
+  useEffect(() => {
+    setSetting('mode', mode);
+  }, [mode]);
 
   // Time in seconds
   const [seconds, setSeconds] = useState<number>(
@@ -35,10 +38,27 @@ const HomeView = () => {
       ? getSetting('timer')
       : getSetting('stopwatch')) as number
   );
+  useEffect(() => {
+    if (mode === Mode.Timer) {
+      setSetting('timer', seconds);
+    }
+
+    if (mode === Mode.Stopwatch) {
+      setSetting('stopwatch', seconds);
+    }
+  }, [seconds, mode]);
+
+  // Initial time for timer mode
+  const [timerInitial, setTimerInitial] = useState<number>(
+    getSetting('timerInitial') as number
+  );
+  useEffect(() => {
+    setSetting('timerInitial', timerInitial);
+  }, [timerInitial]);
 
   // Progress circle
   const [circleSeconds, setCircleSeconds] = useState<number>(
-    mode === Mode.Timer ? (getSetting('timerInitial') as number) : 60
+    mode === Mode.Timer ? timerInitial : 60
   );
 
   // Buffer for typed digits in timer mode
@@ -54,7 +74,7 @@ const HomeView = () => {
 
     if (newMode === Mode.Timer) {
       setSeconds(getSetting('timer') as number);
-      setCircleSeconds(getSetting('timerInitial') as number);
+      setCircleSeconds(timerInitial);
       setInputBuffer(null);
     }
 
@@ -75,8 +95,14 @@ const HomeView = () => {
   // Time update
   useEffect(() => {
     if (isRunning) {
+      // Stop the stopwatch if seconds larger than 99:59
+      if (seconds >= MAX_TIME_SECONDS) {
+        setIsRunning(false);
+      }
+
       startTimeRef.current =
         performance.now() - (mode === Mode.Stopwatch ? seconds * 1000 : 0);
+
       intervalRef.current = setInterval(() => {
         if (startTimeRef.current !== null) {
           const elapsed = (performance.now() - startTimeRef.current) / 1000;
@@ -121,7 +147,7 @@ const HomeView = () => {
   const handleTimeAdjust = useCallback(
     (amount: number) => {
       if (!hasStarted) {
-        setSetting('timerInitial', seconds + amount);
+        setTimerInitial(seconds + amount);
       }
       setSeconds(prev =>
         Math.min(Math.max(prev + amount, 0), MAX_TIME_SECONDS)
@@ -149,7 +175,7 @@ const HomeView = () => {
       const ss = parseInt(padded.slice(2), 10);
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
-      setSetting('timerInitial', totalSeconds);
+      setTimerInitial(totalSeconds);
       setCircleSeconds(totalSeconds);
       setInputBuffer(newBuf);
     } else if (e.key === 'Backspace') {
@@ -161,7 +187,7 @@ const HomeView = () => {
       const ss = parseInt(padded.slice(2), 10);
       const totalSeconds = Math.min(mm * 60 + ss, MAX_TIME_SECONDS);
       setSeconds(totalSeconds);
-      setSetting('timerInitial', totalSeconds);
+      setTimerInitial(totalSeconds);
       setCircleSeconds(totalSeconds);
       setInputBuffer(newBuf);
     }
@@ -196,7 +222,7 @@ const HomeView = () => {
   // Reset the timer to initial value
   const handleReset = useCallback(() => {
     if (mode === Mode.Timer) {
-      setSeconds(getSetting('timerInitial') as number);
+      setSeconds(timerInitial);
     }
 
     if (mode === Mode.Stopwatch) {
@@ -205,7 +231,7 @@ const HomeView = () => {
     setIsRunning(false);
     setHasStarted(false);
     document.body.style.backgroundColor = '';
-  }, [mode]);
+  }, [mode, timerInitial]);
 
   // Handle keydown event
   const handleKeyDown = useCallback(
@@ -237,27 +263,6 @@ const HomeView = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
-
-  // Save time
-  useEffect(() => {
-    if (mode === Mode.Timer) {
-      setSetting('timer', seconds);
-    }
-
-    if (mode === Mode.Stopwatch) {
-      setSetting('stopwatch', seconds);
-
-      // Stop the stopwatch if seconds larger than 99:59
-      if (seconds >= MAX_TIME_SECONDS) {
-        handlePause();
-      }
-    }
-  }, [seconds, mode, handlePause]);
-
-  // Save mode
-  useEffect(() => {
-    setSetting('mode', mode);
-  }, [mode]);
 
   // Prevent page unload if timer is running
   useEffect(() => {
@@ -318,7 +323,7 @@ const HomeView = () => {
             isRunning={isRunning}
             mode={mode}
             seconds={seconds}
-            initialSeconds={getSetting('timerInitial') as number}
+            initialSeconds={timerInitial}
             onStart={handleStart}
             onPause={handlePause}
             onReset={handleReset}
