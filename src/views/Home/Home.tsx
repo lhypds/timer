@@ -361,6 +361,7 @@ const HomeView = () => {
             <ModeSwitch mode={mode} onModeChange={handleModeChange} />
             <Time
               seconds={formatTime(seconds)}
+              timerInitial={formatTime(timerInitial)}
               milliseconds={Math.floor((seconds % 1) * 100)
                 .toString()
                 .padStart(2, '0')}
