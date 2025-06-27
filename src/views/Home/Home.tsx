@@ -20,6 +20,7 @@ import {
   initializeSettings,
   setSetting
 } from '../../utils/settingsUtils';
+import { KEY_ENTER, KEY_NUMPAD_ENTER } from '../../constants/keys';
 
 const TIMER_INTERVAL_MS = 1;
 const MAX_TIME_SECONDS = 99 * 60 + 59;
@@ -210,7 +211,7 @@ const HomeView = () => {
   // Handle keydown event
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+      if (e.code === KEY_ENTER || e.code === KEY_NUMPAD_ENTER) {
         e.preventDefault();
 
         // Blur input
