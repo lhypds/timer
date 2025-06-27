@@ -32,7 +32,7 @@ const Time: React.FC<TimeProps> = ({
       onKeyDown={onKeyDown}
       onFocus={onFocus}
       onBlur={onBlur}
-      readOnly={readOnly}
+      readOnly={true}
       onDragStart={e => e.preventDefault()}
       onMouseDown={readOnly ? e => e.preventDefault() : undefined}
     />
