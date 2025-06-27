@@ -37,12 +37,9 @@ const HomeView = () => {
   );
 
   // Progress circle
-  const [circleSeconds, setCircleSeconds] = useState<number>(0);
-  useEffect(() => {
-    setCircleSeconds(
-      mode === Mode.Timer ? (getSetting('timerInitial') as number) : 60
-    );
-  }, [mode]);
+  const [circleSeconds, setCircleSeconds] = useState<number>(
+    mode === Mode.Timer ? (getSetting('timerInitial') as number) : 60
+  );
 
   // Buffer for typed digits in timer mode
   const [inputBuffer, setInputBuffer] = useState<string | null>(null);
@@ -57,11 +54,13 @@ const HomeView = () => {
 
     if (newMode === Mode.Timer) {
       setSeconds(getSetting('timer') as number);
+      setCircleSeconds(getSetting('timerInitial') as number);
       setInputBuffer(null);
     }
 
     if (newMode === Mode.Stopwatch) {
       setSeconds(getSetting('stopwatch') as number);
+      setCircleSeconds(60);
     }
   };
 
