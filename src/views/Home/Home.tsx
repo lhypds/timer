@@ -3,7 +3,8 @@ import {
   useEffect,
   useCallback,
   ChangeEvent,
-  KeyboardEvent as ReactKeyboardEvent
+  KeyboardEvent as ReactKeyboardEvent,
+  useRef
 } from 'react';
 import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
 import {
@@ -68,26 +69,34 @@ const HomeView = () => {
     initializeSettings();
   }, []);
 
+  const startTimeRef = useRef<number | null>(null);
+  const intervalRef = useRef<number | null>(null);
+
   // Time update
   useEffect(() => {
-    let timer: number;
     if (isRunning) {
-      if (mode === Mode.Timer && seconds > 0) {
-        timer = setInterval(
-          () => setSeconds(prev => prev - 0.001),
-          TIMER_INTERVAL_MS
-        );
-      }
-
-      if (mode === Mode.Stopwatch) {
-        timer = setInterval(
-          () => setSeconds(prev => prev + 0.001),
-          TIMER_INTERVAL_MS
-        );
-      }
+      startTimeRef.current =
+        performance.now() - (mode === Mode.Stopwatch ? seconds * 1000 : 0);
+      intervalRef.current = setInterval(() => {
+        if (startTimeRef.current !== null) {
+          const elapsed = (performance.now() - startTimeRef.current) / 1000;
+          if (mode === Mode.Timer) {
+            const remainingTime = Math.max(seconds - elapsed, 0);
+            setSeconds(remainingTime);
+          } else if (mode === Mode.Stopwatch) {
+            setSeconds(elapsed);
+          }
+        }
+      }, TIMER_INTERVAL_MS); // update every x ms
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
 
-    return () => clearInterval(timer);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [isRunning, seconds, mode]);
 
   const formatTime = (secs: number) => {
