@@ -2,6 +2,9 @@ import React from 'react';
 import styles from './start.module.css';
 import Button from '../ui/Button/Button';
 import { Mode } from '../ModeSwitch/ModeSwitch';
+import playIcon from '../../assets/play.png';
+import pauseIcon from '../../assets/pause.png';
+import resetIcon from '../../assets/reset.png';
 
 interface StartPauseProps {
   isRunning: boolean;
@@ -31,16 +34,16 @@ const StartPause: React.FC<StartPauseProps> = ({
     <div className={styles.container}>
       {isRunning ? (
         <Button onClick={onPause}>
-          <span className={styles.icon}>⏸</span>
+          <img src={pauseIcon} alt="Pause" className={styles.icon} />
         </Button>
       ) : (
         <Button onClick={onStart}>
-          <span className={styles.icon}>▶</span>
+          <img src={playIcon} alt="Play" className={styles.icon} />
         </Button>
       )}
       {showReset && (
         <Button onClick={onReset}>
-          <span className={styles.icon}>↻</span>
+          <img src={resetIcon} alt="Reset" className={styles.icon} />
         </Button>
       )}
     </div>
