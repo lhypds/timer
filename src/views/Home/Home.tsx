@@ -131,7 +131,7 @@ const HomeView = () => {
   useEffect(() => {
     if (isRunning) {
       // Stop the stopwatch if seconds larger than 99:59
-      if (seconds >= MAX_TIMER_SECONDS) {
+      if (seconds > MAX_TIMER_SECONDS) {
         setIsRunning(false);
       }
 
