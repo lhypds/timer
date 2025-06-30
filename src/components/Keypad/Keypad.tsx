@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './keypad.module.css';
+import { eventKey } from '@linktivity/link-utils';
 
 interface KeypadProps {
   onKeyPress: (value: string | number) => void;
@@ -21,8 +22,8 @@ const Keypad: React.FC<KeypadProps> = ({ onKeyPress }) => {
       { value: 8, label: '8' },
       { value: 9, label: '9' },
       { value: 0, label: '0' },
-      { value: 'Backspace', label: '⌫' },
-      { value: 'Enter', label: '↵' }
+      { value: eventKey.Backspace, label: '⌫' },
+      { value: eventKey.Enter, label: '↵' }
     ]
   ];
 
