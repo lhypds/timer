@@ -21,12 +21,12 @@ import {
   initializeSettings,
   setSetting
 } from '../../utils/settingsUtils';
-import { KEY_ENTER, KEY_NUMPAD_ENTER } from '../../constants/keys';
 import {
   TIMER_INTERVAL_MS,
   MAX_TIMER_SECONDS,
   MAX_CLOCK_MINUTES
 } from '../../constants/timer';
+import { eventKey } from '@linktivity/link-utils';
 
 const HomeView = () => {
   // Mode can be 'timer' or 'stopwatch'
@@ -272,7 +272,7 @@ const HomeView = () => {
   // Handle keydown event
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.code === KEY_ENTER || e.code === KEY_NUMPAD_ENTER) {
+      if (e.key === eventKey.Enter) {
         e.preventDefault();
 
         // Blur input
@@ -334,7 +334,7 @@ const HomeView = () => {
       setupTimer(newBuf);
     }
 
-    if (e.key === 'Backspace') {
+    if (e.key === eventKey.Backspace) {
       e.preventDefault();
       const buf = inputBuffer ?? '';
       const newBuf = buf.slice(0, -1);
@@ -355,13 +355,13 @@ const HomeView = () => {
         setupTimer(newBuf);
       }
 
-      if (value === 'Backspace') {
+      if (value === eventKey.Backspace) {
         const buf = inputBuffer ?? '';
         const newBuf = buf.slice(0, -1);
         setupTimer(newBuf);
       }
 
-      if (value === 'Enter') {
+      if (value === eventKey.Enter) {
         // Blur input
         const activeElement = document.activeElement as HTMLElement;
         if (activeElement.tagName === 'INPUT') {
