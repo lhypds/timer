@@ -17,7 +17,7 @@
   border: none;
   cursor: pointer;
   user-select: none;
-  color: black;
+  color: var(--button-color);
 
   &:hover {
     background-color: var(--button-background-hover);

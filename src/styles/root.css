@@ -8,10 +8,13 @@
   --button-background: #f0f0f0;
   --button-background-hover: #e0e0e0;
   --button-background-active: #e0e0e0;
+  --button-color: black;
 
   --text-color-secondary: #737373;
 
   --font-main: 'Fira Code', monospace;
+
+  --font-size-time-sub: 20px;
 }
 
 body {
