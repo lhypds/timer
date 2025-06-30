@@ -7,7 +7,7 @@ interface KeypadProps {
 
 const Keypad: React.FC<KeypadProps> = ({ onKeyPress }) => {
   // Define key values and their display labels
-  const keyRows = [
+  const keyRows: { value: string | number; label: string }[][] = [
     [
       { value: 1, label: '1' },
       { value: 2, label: '2' },
