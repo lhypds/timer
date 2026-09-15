@@ -3,8 +3,7 @@ import {
   useEffect,
   useCallback,
   ChangeEvent,
-  KeyboardEvent as ReactKeyboardEvent,
-  useRef
+  KeyboardEvent as ReactKeyboardEvent
 } from 'react';
 import ProgressCircle from '../../components/ProgressCircle/ProgressCircle';
 import {
@@ -21,12 +20,11 @@ import {
   initializeSettings,
   setSetting
 } from '../../utils/settingsUtils';
-import {
-  TIMER_INTERVAL_MS,
-  MAX_TIMER_SECONDS,
-  MAX_CLOCK_MINUTES
-} from '../../constants/timer';
+import { MAX_TIMER_SECONDS, MAX_CLOCK_MINUTES } from '../../constants/timer';
 import { eventKey } from '@linktivity/link-utils';
+
+import { useTimerClock } from '../../hooks/useTimerClock';
+import { useEvenTimerSync } from '../../hooks/useEvenTimerSync';
 
 const HomeView = () => {
   // Mode can be 'timer' or 'stopwatch'
@@ -36,12 +34,14 @@ const HomeView = () => {
   }, [mode]);
 
   // Time in seconds
-  const [seconds, setSeconds] = useState<number>(
-    () =>
-      (mode === Mode.Timer
-        ? getSetting('timer')
-        : getSetting('stopwatch')) as number
-  );
+  const { seconds, setSeconds, isRunning, setIsRunning, readTime } =
+    useTimerClock(
+      mode,
+      () =>
+        (mode === Mode.Timer
+          ? getSetting('timer')
+          : getSetting('stopwatch')) as number
+    );
   useEffect(() => {
     if (mode === Mode.Timer) {
       setSetting('timer', seconds);
@@ -77,7 +77,7 @@ const HomeView = () => {
 
   // Count to (00:00 - 23:59, max 1439 minutes)
   const [countTo, setCountTo] = useState<number | null>(
-    () => (getSetting('countTo') as number) || null
+    () => (getSetting('countTo') as number | null) ?? null
   );
   useEffect(() => {
     if (countTo !== null) {
@@ -98,7 +98,6 @@ const HomeView = () => {
     }
   }, [inputBuffer]);
 
-  const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -124,41 +123,11 @@ const HomeView = () => {
     initializeSettings();
   }, []);
 
-  const startTimeRef = useRef<number | null>(null);
-  const intervalRef = useRef<number | null>(null);
-
-  // Time update
-  useEffect(() => {
-    if (isRunning) {
-      // Stop the stopwatch if seconds larger than 99:59
-      if (seconds > MAX_TIMER_SECONDS) {
-        setIsRunning(false);
-      }
-
-      startTimeRef.current =
-        performance.now() - (mode === Mode.Stopwatch ? seconds * 1000 : 0);
-
-      intervalRef.current = setInterval(() => {
-        if (startTimeRef.current !== null) {
-          const elapsed = (performance.now() - startTimeRef.current) / 1000;
-          if (mode === Mode.Timer) {
-            const remainingTime = Math.max(seconds - elapsed, 0);
-            setSeconds(remainingTime);
-          } else if (mode === Mode.Stopwatch) {
-            setSeconds(elapsed);
-          }
-        }
-      }, TIMER_INTERVAL_MS); // update every x ms
-    } else if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isRunning, seconds, mode]);
+  useEvenTimerSync(() => ({
+    ...readTime(),
+    countTo:
+      mode === Mode.Timer && isCountToTimer && isEditing ? (countTo ?? 0) : null
+  }));
 
   // Handle input change
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -186,7 +155,7 @@ const HomeView = () => {
         );
       }
     },
-    [mode]
+    [mode, setSeconds]
   );
 
   // On focus, start editing buffer
@@ -230,7 +199,7 @@ const HomeView = () => {
       setTimerInitial(totalSeconds);
       setCircleSeconds(totalSeconds);
     }
-  }, [isCountToTimer, countTo]);
+  }, [isCountToTimer, countTo, setSeconds]);
 
   // start the timer
   const handleStart = useCallback(() => {
@@ -247,12 +216,12 @@ const HomeView = () => {
       // reset to timer mode
       setIsCountToTimer(false);
     }
-  }, [hasStarted, isCountToTimer, resetCountToTimer]);
+  }, [hasStarted, isCountToTimer, resetCountToTimer, setIsRunning]);
 
   // Pause the timer
   const handlePause = useCallback(() => {
     setIsRunning(false);
-  }, []);
+  }, [setIsRunning]);
 
   // Reset the timer to initial value
   const handleReset = useCallback(() => {
@@ -267,7 +236,7 @@ const HomeView = () => {
     setIsRunning(false);
     setHasStarted(false);
     document.body.style.backgroundColor = ''; // reset flashed background
-  }, [mode, timerInitial]);
+  }, [mode, timerInitial, setSeconds, setIsRunning]);
 
   // Handle keydown event
   const handleKeyDown = useCallback(
@@ -318,7 +287,7 @@ const HomeView = () => {
         setInputBuffer(newBuf);
       }
     },
-    [isCountToTimer]
+    [isCountToTimer, setSeconds]
   );
 
   // Handle numeric key input shifting digits into mm:ss format
