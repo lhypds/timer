@@ -21,4 +21,5 @@
 
 body {
   font-family: var(--font-main);
+  -webkit-tap-highlight-color: transparent;
 }
