@@ -38,11 +38,12 @@ html,
 body {
   height: 100%;
   scroll-behavior: smooth;
+  overscroll-behavior: none;
 }
 
 #root {
   height: 100%;
-  touch-action: manipulation;
+  touch-action: none;
 }
 
 a {
