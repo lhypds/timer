@@ -14,7 +14,7 @@ function RootErrorBoundary() {
 }
 
 const lazyView = (view: JSX.Element) => {
-  return <Suspense fallback="Loading...">{view}</Suspense>;
+  return <Suspense fallback={null}>{view}</Suspense>;
 };
 
 const AppRoutes = () => {
