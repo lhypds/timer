@@ -123,12 +123,6 @@ const HomeView = () => {
     initializeSettings();
   }, []);
 
-  useEvenTimerSync(() => ({
-    ...readTime(),
-    countTo:
-      mode === Mode.Timer && isCountToTimer && isEditing ? (countTo ?? 0) : null
-  }));
-
   // Handle input change
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const [m, s] = e.target.value.split(':').map(Number);
@@ -237,6 +231,34 @@ const HomeView = () => {
     setHasStarted(false);
     document.body.style.backgroundColor = ''; // reset flashed background
   }, [mode, timerInitial, setSeconds, setIsRunning]);
+
+  // Mirror the time on Even glasses when embedded by ../timer-even. A tap on
+  // the glasses is the Enter key: pause while running (which also stops the
+  // flashing here), otherwise start — except that a countdown paused at zero
+  // has nothing to start, so a tap resets it instead.
+  useEvenTimerSync(
+    () => ({
+      ...readTime(),
+      countTo:
+        mode === Mode.Timer && isCountToTimer && isEditing
+          ? (countTo ?? 0)
+          : null
+    }),
+    command => {
+      if (command !== 'toggle') return;
+      const activeElement = document.activeElement as HTMLElement | null;
+      if (activeElement?.tagName === 'INPUT') {
+        activeElement.blur();
+      }
+      if (isRunning) {
+        handlePause();
+      } else if (mode === Mode.Timer && seconds <= 0) {
+        handleReset();
+      } else {
+        handleStart();
+      }
+    }
+  );
 
   // Handle keydown event
   const handleKeyDown = useCallback(

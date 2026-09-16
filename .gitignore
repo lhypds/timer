@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Local deploy config (PORT / PM2_NAME / HOST), created from .env.example.
+# The .env.<mode> files below it stay tracked — those are Vite build modes.
+.env
+.env.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

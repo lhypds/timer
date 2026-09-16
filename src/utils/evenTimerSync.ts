@@ -4,10 +4,14 @@ export interface EvenTimerSnapshot extends ClockAnchor {
   countTo: number | null;
 }
 
+/** What the companion may ask of the timer: a tap on the glasses is the Enter key. */
+export type EvenTimerCommand = 'toggle';
+
 // Opt-in only: ordinary visits to timer.gcc3.com never publish timer state.
 export function createEvenTimerSender(
   host: Window,
-  read: () => EvenTimerSnapshot
+  read: () => EvenTimerSnapshot,
+  onCommand?: (command: EvenTimerCommand) => void
 ) {
   const params = new URLSearchParams(host.location.search);
   const session = params.get('evenSession');
@@ -28,7 +32,10 @@ export function createEvenTimerSender(
     }
   }
   let connected = false;
-  let sequence = 0;
+  // Starts at the clock rather than at zero, so a sender re-created without a
+  // page load — a remounted component, a hot reload — continues above every
+  // number its predecessor sent, and the parent never takes it for old news.
+  let sequence = Date.now();
   let lastSignature = '';
   function publish(force = false) {
     if (!connected) return;
@@ -60,12 +67,17 @@ export function createEvenTimerSender(
       !data ||
       data.source !== 'gcc3-timer-even' ||
       data.version !== 1 ||
-      data.type !== 'request-state' ||
       data.session !== session
     )
       return;
-    connected = true;
-    publish(true);
+    if (data.type === 'request-state') {
+      connected = true;
+      publish(true);
+    } else if (data.type === 'toggle' && connected) {
+      // Only after the handshake: a command is something the connected
+      // companion says, never the first thing a window says.
+      onCommand?.('toggle');
+    }
   }
   host.addEventListener('message', receive);
   return {
