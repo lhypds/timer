@@ -9,8 +9,10 @@
   user-select: none;
   color: var(--button-color);
 
-  &:hover {
-    background-color: var(--button-background-hover);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-background-hover);
+    }
   }
 
   &.active {
