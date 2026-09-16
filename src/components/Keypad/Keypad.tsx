@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './keypad.module.css';
-import { eventKey } from '@linktivity/link-utils';
+import { eventKey } from '@/utils/eventKey';
 
 interface KeypadProps {
   onKeyPress: (value: string | number) => void;

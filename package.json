@@ -13,11 +13,6 @@
     "format": "prettier --write --list-different \"./**/*.{js,jsx,ts,tsx,css,md,json,yaml}\" "
   },
   "dependencies": {
-    "@linktivity/link-hooks": "^1.0.1",
-    "@linktivity/link-icons": "^1.0.1",
-    "@linktivity/link-styles": "^1.0.1",
-    "@linktivity/link-ui": "^1.0.1",
-    "@linktivity/link-utils": "^1.0.1",
     "i18next": "^23.10.1",
     "mobx": "^6.13.1",
     "mobx-react-lite": "^4.0.7",

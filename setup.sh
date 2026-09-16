@@ -25,13 +25,6 @@ if ! command -v pnpm &> /dev/null; then
   fi
 fi
 
-# @linktivity/* come from GitHub Packages (see .npmrc), which refuses anonymous
-# downloads. Warn up front rather than let pnpm install fail with a bare 401.
-if ! grep -qs "npm.pkg.github.com/:_authToken" "$HOME/.npmrc"; then
-  echo "Warning: no GitHub Packages token in ~/.npmrc — installing @linktivity/* will fail." >&2
-  echo "  echo '//npm.pkg.github.com/:_authToken=<token with read:packages>' >> ~/.npmrc" >&2
-fi
-
 # Install pm2 globally if not present
 if ! command -v pm2 &> /dev/null; then
   echo "Installing pm2..."

@@ -10,10 +10,12 @@
   --button-background-active: #e0e0e0;
   --button-color: black;
 
+  --color-text: #222726;
   --text-color-secondary: #737373;
 
   --font-main: 'Fira Code', monospace;
 
+  --font-size-3xl: 1.5rem;
   --font-size-time-sub: 20px;
 }
 

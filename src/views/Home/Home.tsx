@@ -21,7 +21,7 @@ import {
   setSetting
 } from '../../utils/settingsUtils';
 import { MAX_TIMER_SECONDS, MAX_CLOCK_MINUTES } from '../../constants/timer';
-import { eventKey } from '@linktivity/link-utils';
+import { eventKey } from '@/utils/eventKey';
 
 import { useTimerClock } from '../../hooks/useTimerClock';
 import { useEvenTimerSync } from '../../hooks/useEvenTimerSync';
