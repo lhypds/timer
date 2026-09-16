@@ -21,4 +21,4 @@ fi
 pm2 start ecosystem.config.cjs --update-env
 
 PORT=$(grep '^PORT=' .env 2>/dev/null | cut -d= -f2)
-echo "timer running at http://localhost:${PORT:-3301}"
+echo "timer running at http://localhost:${PORT:-3189}"

@@ -13,13 +13,12 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
-      "@linktivity/link-hooks": ["packages/hooks/src"],
-      "@linktivity/link-icons": ["packages/icons/src"],
-      "@linktivity/link-utils": ["packages/utils/src"],
-      "@linktivity/link-ui": ["packages/ui/src"],
-      "@linktivity/link-docs/*": ["packages/docs/src/*"]
+      "@linktivity/link-hooks": ["./packages/hooks/src"],
+      "@linktivity/link-icons": ["./packages/icons/src"],
+      "@linktivity/link-utils": ["./packages/utils/src"],
+      "@linktivity/link-ui": ["./packages/ui/src"],
+      "@linktivity/link-docs/*": ["./packages/docs/src/*"]
     },
     /* Linting */
     "strict": true,

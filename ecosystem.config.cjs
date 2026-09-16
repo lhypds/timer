@@ -10,7 +10,11 @@ if (fs.existsSync(envPath)) {
   }
 }
 
-const PORT = env.PORT || '3301';
+const PORT = env.PORT || '3189';
+// Loopback only: nginx in front is the public face, so the preview server
+// itself must not answer on every interface. BIND=0.0.0.0 opens it to the LAN
+// for a machine that runs without a proxy.
+const BIND = env.BIND || '127.0.0.1';
 const PM2_NAME = env.PM2_NAME || 'timer';
 
 module.exports = {
@@ -22,7 +26,7 @@ module.exports = {
       // signals the server directly instead of a package-manager wrapper that
       // would leave the real process orphaned on stop.
       script: 'node_modules/vite/bin/vite.js',
-      args: `preview --host --port ${PORT}`,
+      args: `preview --host ${BIND} --port ${PORT}`,
       cwd: __dirname,
       instances: 1,
       autorestart: true,
