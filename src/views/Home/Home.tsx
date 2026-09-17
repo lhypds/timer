@@ -235,7 +235,8 @@ const HomeView = () => {
   // Mirror the time on Even glasses when embedded by ../timer-even. A tap on
   // the glasses is the Enter key: pause while running (which also stops the
   // flashing here), otherwise start — except that a countdown paused at zero
-  // has nothing to start, so a tap resets it instead.
+  // has nothing to start, so a tap resets it instead. Scrolling is the adjust
+  // buttons, running or not, in either direction.
   useEvenTimerSync(
     () => ({
       ...readTime(),
@@ -245,12 +246,13 @@ const HomeView = () => {
           : null
     }),
     command => {
-      if (command !== 'toggle') return;
       const activeElement = document.activeElement as HTMLElement | null;
       if (activeElement?.tagName === 'INPUT') {
         activeElement.blur();
       }
-      if (isRunning) {
+      if (command.type === 'adjust') {
+        handleTimeAdjust(command.seconds);
+      } else if (isRunning) {
         handlePause();
       } else if (mode === Mode.Timer && seconds <= 0) {
         handleReset();

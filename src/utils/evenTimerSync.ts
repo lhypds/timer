@@ -4,8 +4,13 @@ export interface EvenTimerSnapshot extends ClockAnchor {
   countTo: number | null;
 }
 
-/** What the companion may ask of the timer: a tap on the glasses is the Enter key. */
-export type EvenTimerCommand = 'toggle';
+/**
+ * What the companion may ask of the timer: a tap on the glasses is the Enter
+ * key, and scrolling moves the time by whole seconds, as the adjust buttons do.
+ */
+export type EvenTimerCommand =
+  | { type: 'toggle' }
+  | { type: 'adjust'; seconds: number };
 
 // Opt-in only: ordinary visits to timer.gcc3.com never publish timer state.
 export function createEvenTimerSender(
@@ -73,10 +78,14 @@ export function createEvenTimerSender(
     if (data.type === 'request-state') {
       connected = true;
       publish(true);
-    } else if (data.type === 'toggle' && connected) {
+    } else if (!connected) {
       // Only after the handshake: a command is something the connected
       // companion says, never the first thing a window says.
-      onCommand?.('toggle');
+      return;
+    } else if (data.type === 'toggle') {
+      onCommand?.({ type: 'toggle' });
+    } else if (data.type === 'adjust' && Number.isSafeInteger(data.seconds)) {
+      onCommand?.({ type: 'adjust', seconds: data.seconds });
     }
   }
   host.addEventListener('message', receive);
