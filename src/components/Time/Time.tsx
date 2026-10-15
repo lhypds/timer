@@ -142,6 +142,11 @@ const Time: React.FC<TimeProps> = ({
         onFocus={onFocus}
         onBlur={onBlur}
         readOnly={true}
+        inputMode="none"
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck={false}
         onDragStart={e => e.preventDefault()}
         onMouseDown={e => {
           if (!isEditable) {
